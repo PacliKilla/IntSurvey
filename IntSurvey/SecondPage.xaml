@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:maui="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             x:Class="IntSurvey.SecondPage">
+    <VerticalStackLayout>
+        <Label 
+            Text="Activare licență."
+            FontSize="35"
+            TextColor="#000000"
+            VerticalOptions="Center" 
+            HorizontalOptions="Center" />
+        <Label 
+            Text="Introduceți cheia de licență din 9 cifre."
+            FontSize="28"
+            TextColor="#000000"
+            VerticalOptions="Center" 
+            HorizontalOptions="Center" />
+
+        <Frame BorderColor="#000000" CornerRadius="1" Padding="1">
+            <Grid>
+                <Entry x:Name="MyEntry" 
+                       Text="{Binding MyKey}"
+                       BackgroundColor="#9dbcd4"
+                       HorizontalOptions="FillAndExpand">
+                    <Entry.Behaviors>
+                        <toolkit:MultiValidationBehavior
+                            x:Name="keyValidator"
+                            Flags="ValidateOnAttaching,ValidateOnValueChanged">
+                            <toolkit:CharactersValidationBehavior
+                                Flags="ValidateOnValueChanged"
+                                CharacterType="Digit"
+                                MinimumCharacterTypeCount="9"
+                                MaximumCharacterTypeCount="9"
+                                toolkit:MultiValidationBehavior.Error="Formatul cheii este greşit"
+                            />
+                            <toolkit:TextValidationBehavior
+                                Flags="ValidateOnValueChanged"
+                                MinimumLength="1"
+                                toolkit:MultiValidationBehavior.Error="Este necesară cheia"
+                            />
+                        </toolkit:MultiValidationBehavior>
+                    </Entry.Behaviors>
+                </Entry>
+            </Grid>
+        </Frame>
+
+        <Button x:Name="btnGoBackToHomePage"
+                Text="Login"
+                Clicked="btnGoBackToHomePage_Clicked"
+                Margin="10"
+                BackgroundColor="#37AA0F"
+                TextColor="#FFFFFF"
+                BorderColor="#000000" 
+                FontAttributes="Bold"/>
+    </VerticalStackLayout>
+</ContentPage>

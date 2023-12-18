@@ -6,6 +6,8 @@ using Newtonsoft.Json;
 using System.Net.Http.Headers;
 using System.Text;
 
+
+
 namespace IntSurvey;
 
 
@@ -38,16 +40,17 @@ public partial class SecondPage : ContentPage
 
     private async void btnGoBackToHomePage_Clicked(object sender, EventArgs e)
     {
-       // if (keyValidator.IsNotValid)
-       // {
+        // if (keyValidator.IsNotValid)
+        // {
         //    foreach (var error in keyValidator.Errors)
         //    {
-         //       DisplayAlert("Error", error.ToString(), "OK");
-         //   }
+        //       DisplayAlert("Error", error.ToString(), "OK");
+        //   }
         //    return;
-       // }
+        // }
+        string enteredText = entry1.Text + entry2.Text + entry3.Text + entry4.Text + entry5.Text + entry6.Text + entry7.Text + entry8.Text + entry9.Text;
 
-        string enteredText = MyKey;
+        MyKey = enteredText;
 
         using (HttpClient client = new HttpClient())
         {
@@ -60,7 +63,8 @@ public partial class SecondPage : ContentPage
                 if (CodeID.id == "00000000-0000-0000-0000-000000000000")
                 {
                     await DisplayAlert("Alertă", "Cheia introdusă nu este validă..", "OK");
-                    return; 
+                   entry1.Text = entry2.Text = entry3.Text = entry4.Text = entry5.Text = entry6.Text = entry7.Text = entry8.Text = entry9.Text = "";
+                   return; 
                 }
 
                 await SecureStorage.SetAsync("LicenseID", CodeID.id);
@@ -80,4 +84,94 @@ public partial class SecondPage : ContentPage
 
         Navigation.PushAsync(new HomePage());
     }
+    private void OnEntryTextChanged(object sender, TextChangedEventArgs e)
+    {
+        var entry = (Entry)sender;
+
+        // Remove non-numeric characters
+        var numericText = new string(e.NewTextValue.Where(char.IsDigit).ToArray());
+
+        if (e.NewTextValue != numericText)
+        {
+            entry.Text = numericText;
+        }
+
+        if (!string.IsNullOrEmpty(e.NewTextValue) && e.NewTextValue.Length == 1)
+        {
+            // Move focus to the next Entry when a digit is entered
+            switch (entry)
+            {
+                case var _ when entry == entry1:
+                    entry2.Focus();
+                    break;
+                case var _ when entry == entry2:
+                    entry3.Focus();
+                    break;
+                case var _ when entry == entry3:
+                    entry4.Focus();
+                    break;
+                case var _ when entry == entry4:
+                    entry5.Focus();
+                    break;
+                case var _ when entry == entry5:
+                    entry6.Focus();
+                    break;
+                case var _ when entry == entry6:
+                    entry7.Focus();
+                    break;
+                case var _ when entry == entry7:
+                    entry8.Focus();
+                    break;
+                case var _ when entry == entry8:
+                    entry9.Focus();
+                    break;
+            }
+        }
+        else if (string.IsNullOrEmpty(e.NewTextValue))
+        {
+            // Move focus to the previous Entry when deleting a digit
+            switch (entry)
+            {
+                case var _ when entry == entry9:
+                    entry8.Focus();
+                    break;
+                case var _ when entry == entry8:
+                    entry7.Focus();
+                    break;
+                case var _ when entry == entry7:
+                    entry6.Focus();
+                    break;
+                case var _ when entry == entry6:
+                    entry5.Focus();
+                    break;
+                case var _ when entry == entry5:
+                    entry4.Focus();
+                    break;
+                case var _ when entry == entry4:
+                    entry3.Focus();
+                    break;
+                case var _ when entry == entry3:
+                    entry2.Focus();
+                    break;
+                case var _ when entry == entry2:
+                    entry1.Focus();
+                    break;
+            }
+        }
+        if (!string.IsNullOrEmpty(entry1.Text) &&
+            !string.IsNullOrEmpty(entry2.Text) &&
+            !string.IsNullOrEmpty(entry3.Text) &&
+            !string.IsNullOrEmpty(entry4.Text) &&
+            !string.IsNullOrEmpty(entry5.Text) &&
+            !string.IsNullOrEmpty(entry6.Text) &&
+            !string.IsNullOrEmpty(entry7.Text) &&
+            !string.IsNullOrEmpty(entry8.Text) &&
+            !string.IsNullOrEmpty(entry9.Text))
+        {
+            // Trigger the button click event
+            btnGoBackToHomePage_Clicked(sender, e);
+        }
+    }
+
+
 }

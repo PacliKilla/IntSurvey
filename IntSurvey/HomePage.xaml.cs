@@ -6,9 +6,11 @@ using System.Text.Json;
 using IntSurvey.Models;
 using IntSurvey.QuestionModels;
 using Microsoft.Maui.Controls;
+using Microsoft.Maui.Controls.Compatibility;
+using Microsoft.Maui.Layouts;
 using Newtonsoft.Json;
 using Plugin.Connectivity;
-
+using Grid = Microsoft.Maui.Controls.Grid;
 using Questionnaire = IntSurvey.QuestionModels.Questionnaire;
 
 namespace IntSurvey
@@ -17,8 +19,8 @@ namespace IntSurvey
     {
         Dictionary<int, List<Question>> questionnaireQuestions = new Dictionary<int, List<Question>>();
         string cachedID = SecureStorage.GetAsync("LicenseID").Result;
-        public string baseLink = "https://dev.edi.md/ISNPSAPI/Mobile/GetQuestionnaires?LicenseID=";
-        public string baseOidLink = "https://dev.edi.md/ISNPSAPI/Mobile/GetQuestionnaire?LicenseId=";
+        public string baseLink = "https://dev.edi.md/ISNPSAPI/Mobile/GetQuestionnairesNEW?LicenseID=";
+        public string baseOidLink = "https://dev.edi.md/ISNPSAPI/Mobile/GetQuestionnaireNEW?LicenseId=";
         public string licenseIDLink => $"{baseLink}{cachedID}";
         public string OidLink => $"{baseOidLink}{cachedID}";
         string username = "uSr_nps";
@@ -86,28 +88,46 @@ namespace IntSurvey
 
                     questionnaireQuestions.Add(oid, oidquestionnaires.questionnaire.questions);
 
-                    Button questionnaireButton = new Button
+                    Label questionnaireLabel = new Label
                     {
                         Text = questionnaire.name,
                         FontSize = 20,
-                        CommandParameter = new QuestionnaireInfo { SelectedOid = oid, CompanyOid = questionnaire.companyOid },
-                        Margin = new Thickness(10, 10, 10, 10),
-                        BackgroundColor = Color.FromHex("#37AA0F"),
                         TextColor = Color.FromHex("#FFFFFF"),
-                        BorderColor = Color.FromHex("#000000"),
-                        BorderWidth = 1,
+                        HorizontalOptions = LayoutOptions.Start,
+                        VerticalOptions = LayoutOptions.Center,
+                        Padding = new Thickness(45, 0, 0, 0),
+                        FontAttributes = FontAttributes.Bold,
+                        InputTransparent = true,
+                    };
+
+
+                    Button questionnaireButton = new Button
+                    {
+                        Text = questionnaire.name,
+                        FontSize = 30,
+                        CommandParameter = new QuestionnaireInfo { SelectedOid = oid, CompanyOid = questionnaire.companyOid },
+                        Margin = new Thickness(25, 5, 25, 5),
+                        BackgroundColor = Color.FromHex("#37AA0F"),
+                        TextColor = Color.FromRgba(0, 0, 0, 0),
                         CornerRadius = 5,
-                        Shadow = new Shadow
-                        {
-                            Offset = new Point(1, 1),
-                            Radius = 2,
-                        },
+                      
                         FontAttributes = FontAttributes.Bold
                     };
 
                     questionnaireButton.Clicked += OnQuestionnaireButtonClicked;
+                    
+                    Grid grid = new Grid();
+                    grid.Children.Add(questionnaireButton);
+                    grid.Children.Add(questionnaireLabel);
 
-                    stackLayout.Children.Add(questionnaireButton);
+                    
+                    Grid.SetRow(questionnaireButton, 0);
+                    Grid.SetColumn(questionnaireButton, 0);
+                    Grid.SetRow(questionnaireLabel, 0);
+                    Grid.SetColumn(questionnaireLabel, 0);
+
+                    
+                    stackLayout.Children.Add(grid);
                 }
             }
         }

@@ -10,49 +10,54 @@
             FontSize="35"
             TextColor="#000000"
             VerticalOptions="Center" 
-            HorizontalOptions="Center" />
+            HorizontalOptions="Center" 
+            Margin="0,50,0,32"/>
         <Label 
             Text="Introduceți cheia de licență din 9 cifre."
             FontSize="28"
             TextColor="#000000"
             VerticalOptions="Center" 
-            HorizontalOptions="Center" />
+            HorizontalOptions="Center" 
+            Margin="0,0,0,32"/>
 
-        <Frame BorderColor="#000000" CornerRadius="1" Padding="1">
-            <Grid>
-                <Entry x:Name="MyEntry" 
-                       Text="{Binding MyKey}"
-                       BackgroundColor="#9dbcd4"
-                       HorizontalOptions="FillAndExpand">
-                    <Entry.Behaviors>
-                        <toolkit:MultiValidationBehavior
-                            x:Name="keyValidator"
-                            Flags="ValidateOnAttaching,ValidateOnValueChanged">
-                            <toolkit:CharactersValidationBehavior
-                                Flags="ValidateOnValueChanged"
-                                CharacterType="Digit"
-                                MinimumCharacterTypeCount="9"
-                                MaximumCharacterTypeCount="9"
-                                toolkit:MultiValidationBehavior.Error="Formatul cheii este greşit"
-                            />
-                            <toolkit:TextValidationBehavior
-                                Flags="ValidateOnValueChanged"
-                                MinimumLength="1"
-                                toolkit:MultiValidationBehavior.Error="Este necesară cheia"
-                            />
-                        </toolkit:MultiValidationBehavior>
-                    </Entry.Behaviors>
-                </Entry>
-            </Grid>
-        </Frame>
+        <StackLayout Orientation="Horizontal" HorizontalOptions="Center" Spacing="10">
+            <Frame BorderColor="#000000" CornerRadius="5" Padding="1">
+                <Entry x:Name="entry1" MaxLength="1" BackgroundColor="Transparent" TextColor="#000000" HorizontalOptions="Center"
+                       TextChanged="OnEntryTextChanged" Keyboard="Numeric" VerticalOptions="Center" Margin="17,0,-8,0" FontSize = "30"/>
+            </Frame>
+            <Frame BorderColor="#000000" CornerRadius="5" Padding="1">
+                <Entry x:Name="entry2" MaxLength="1" BackgroundColor="Transparent" TextColor="#000000" HorizontalOptions="Center"
+                       TextChanged="OnEntryTextChanged" Keyboard="Numeric" VerticalOptions="Center" Margin="17,0,-8,0" FontSize = "30"/>
+            </Frame>
+            <Frame BorderColor="#000000" CornerRadius="5" Padding="1">
+                <Entry x:Name="entry3" MaxLength="1" BackgroundColor="Transparent" TextColor="#000000" HorizontalOptions="Center"
+                       TextChanged="OnEntryTextChanged" Keyboard="Numeric" VerticalOptions="Center" Margin="17,0,-8,0" FontSize = "30"/>
+            </Frame>
+            <Frame BorderColor="#000000" CornerRadius="5" Padding="1">
+                <Entry x:Name="entry4" MaxLength="1" BackgroundColor="Transparent" TextColor="#000000" HorizontalOptions="Center"
+                       TextChanged="OnEntryTextChanged" Keyboard="Numeric" VerticalOptions="Center" Margin="17,0,-8,0" FontSize = "30"/>
+            </Frame>
+            <Frame BorderColor="#000000" CornerRadius="5" Padding="1">
+                <Entry x:Name="entry5" MaxLength="1" BackgroundColor="Transparent" TextColor="#000000" HorizontalOptions="Center"
+                       TextChanged="OnEntryTextChanged" Keyboard="Numeric" VerticalOptions="Center" Margin="17,0,-8,0" FontSize = "30"/>
+            </Frame>
+            <Frame BorderColor="#000000" CornerRadius="5" Padding="1">
+                <Entry x:Name="entry6" MaxLength="1" BackgroundColor="Transparent" TextColor="#000000" HorizontalOptions="Center"
+                       TextChanged="OnEntryTextChanged" Keyboard="Numeric" VerticalOptions="Center" Margin="17,0,-8,0" FontSize = "30"/>
+            </Frame>
+            <Frame BorderColor="#000000" CornerRadius="5" Padding="1">
+                <Entry x:Name="entry7" MaxLength="1" BackgroundColor="Transparent" TextColor="#000000" HorizontalOptions="Center"
+                       TextChanged="OnEntryTextChanged" Keyboard="Numeric" VerticalOptions="Center" Margin="17,0,-8,0" FontSize = "30"/>
+            </Frame>
+            <Frame BorderColor="#000000" CornerRadius="5" Padding="1">
+                <Entry x:Name="entry8" MaxLength="1" BackgroundColor="Transparent" TextColor="#000000" HorizontalOptions="Center"
+                       TextChanged="OnEntryTextChanged" Keyboard="Numeric" VerticalOptions="Center" Margin="17,0,-8,0" FontSize = "30"/>
+            </Frame>
+            <Frame BorderColor="#000000" CornerRadius="5" Padding="1">
+                <Entry x:Name="entry9" MaxLength="1" BackgroundColor="Transparent" TextColor="#000000" HorizontalOptions="Center"
+                       TextChanged="OnEntryTextChanged" Keyboard="Numeric" VerticalOptions="Center" Margin="17,0,-8,0" FontSize = "30"/>
+            </Frame>
+        </StackLayout>
 
-        <Button x:Name="btnGoBackToHomePage"
-                Text="Login"
-                Clicked="btnGoBackToHomePage_Clicked"
-                Margin="10"
-                BackgroundColor="#37AA0F"
-                TextColor="#FFFFFF"
-                BorderColor="#000000" 
-                FontAttributes="Bold"/>
     </VerticalStackLayout>
 </ContentPage>

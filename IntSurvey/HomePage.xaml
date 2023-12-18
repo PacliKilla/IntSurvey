@@ -12,7 +12,7 @@
     </ContentPage.Resources>
     <ScrollView>
         <StackLayout x:Name="stackLayout">
-            <!-- Your content goes here -->
+            <Label Text="Chestionare" FontFamily="Roboto"  FontSize="48" HorizontalOptions="Center" VerticalOptions="Start" Margin="0,40,0,30" FontAttributes="Bold"/>
         </StackLayout>
     </ScrollView>
 </ContentPage>

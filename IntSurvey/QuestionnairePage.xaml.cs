@@ -8,6 +8,7 @@ using Plugin.Toast;
 using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
 using System.Threading;
+using System.Diagnostics;
 
 namespace IntSurvey
 {
@@ -196,11 +197,19 @@ namespace IntSurvey
                                                 var answerVariant = questions[currentQuestionIndex].responseVariants
                                                     .FirstOrDefault(av => av.response == answerLabel?.Text);
 
-                                                if (answerCheckBox != null && answerLabel != null &&
-                                                    answerVariant != null && answerForType3 == answerVariant.id.ToString())
+                                                if (answerCheckBox != null && answerLabel != null && answerVariant != null)
                                                 {
-                                                    answerCheckBox.IsChecked = true;
-                                                    return;
+                                                    Debug.WriteLine($"answerForType3: {answerForType3}, answerVariant.id.ToString(): {answerVariant.id.ToString()}");
+
+                                                    if (answerForType3 == answerVariant.id.ToString())
+                                                    {
+                                                        Device.BeginInvokeOnMainThread(() =>
+                                                        {
+                                                            answerCheckBox.IsChecked = true;
+                                                            Debug.WriteLine("CheckBox set to true");
+                                                        });
+                                                        return;
+                                                    }
                                                 }
                                             }
                                         }
@@ -209,9 +218,6 @@ namespace IntSurvey
                             }
                         }
                         break;
-
-
-
 
 
 
@@ -885,13 +891,13 @@ namespace IntSurvey
                        // await writer.WriteAsync(json);
                         //}
                         CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
-                        //var successMessage = $"Răspunsul a fost trimis cu succes." + Environment.NewLine + "Mulțumim pentru opinia dumneavoastră.";
-                        var successMessage = $"Responses submitted successfully.\n\nRequest content:\n{json}\n\nResponse content:\n{jsonResponse}";
-                        await DisplayAlert("Success", successMessage, "OK");
+                        var successMessage = $"Răspunsul a fost trimis cu succes." + Environment.NewLine + "Mulțumim pentru opinia dumneavoastră.";
+                        //var successMessage = $"Responses submitted successfully.\n\nRequest content:\n{json}\n\nResponse content:\n{jsonResponse}";
+                        //await DisplayAlert("Success", successMessage, "OK");
 
-                        //var toast = Toast.Make(successMessage, duration: ToastDuration.Long);
+                        var toast = Toast.Make(successMessage, duration: ToastDuration.Long);
 
-                        //await toast.Show(cancellationTokenSource.Token);
+                        await toast.Show(cancellationTokenSource.Token);
                     }
                     else
                     {

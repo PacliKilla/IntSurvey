@@ -24,6 +24,8 @@ namespace IntSurvey
         private string selectedAnswer;
         private HashSet<string> multipleAnswers = new HashSet<string>();
         private bool selectedAnswerForType1;
+        private Dictionary<string, bool> selectedAnswersForType1 = new Dictionary<string, bool>();
+
         private Dictionary<string, string> selectedAnswersForType3 = new Dictionary<string, string>();
         private Dictionary<string, HashSet<string>> selectedAnswersForType4 = new Dictionary<string, HashSet<string>>();
         private Dictionary<string, string> selectedAnswersForType2 = new Dictionary<string, string>();
@@ -104,37 +106,33 @@ namespace IntSurvey
             if (selectedAnswers.ContainsKey(questions[currentQuestionIndex].question))
             {
                 var selectedAnswer = selectedAnswers[questions[currentQuestionIndex].question];
+                bool localSelectedAnswerForType1 = selectedAnswersForType1[questions[currentQuestionIndex].question];
 
                 switch (questions[currentQuestionIndex].gradingType)
                 {
                     case 1:
-                        if (selectedAnswer != null && selectedAnswer is bool answerForType1)
+                        if (localSelectedAnswerForType1 != null && localSelectedAnswerForType1 is bool answerForType1)
                         {
-                            selectedAnswerForType1 = answerForType1;
+                            selectedAnswersForType1[questions[currentQuestionIndex].question] = answerForType1;
 
                             if (lastRadioButtonStackLayout != null)
                             {
-                                
-                                foreach (var child in lastRadioButtonStackLayout.Children)
-                                {
-                                    if (child is ImageRadioButton radioButton && radioButton.Answer == selectedAnswerForType1)
-                                    {
-                                        
-                                        radioButton.RestoreSelectionState(selectedAnswerForType1);
+                                var questionKey = questions[currentQuestionIndex].question;
 
-                                        
-                                        if (!selectedAnswerForType1 && child is ImageRadioButton falseRadioButton)
+                                if (selectedAnswersForType1.TryGetValue(questionKey, out var savedAnswer))
+                                {
+                                    foreach (var child in lastRadioButtonStackLayout.Children)
+                                    {
+                                        if (child is ImageRadioButton radioButton && radioButton.Answer == savedAnswer)
                                         {
-                                            falseRadioButton.SimulateTap();
+                                            radioButton.SimulateTap();
+                                            break; // No need to continue checking other radio buttons
                                         }
                                     }
                                 }
                             }
                         }
                         break;
-
-
-
 
 
 
@@ -617,7 +615,7 @@ namespace IntSurvey
                     }
                 };
 
-                double labelWidthPercentage = 0.3;
+                double labelWidthPercentage = 0.4;
                 double labelWidth = DeviceDisplay.MainDisplayInfo.Width * labelWidthPercentage;
 
 
@@ -801,9 +799,9 @@ namespace IntSurvey
             }
             else
             {
-                if (responses == null || responses.Any(response => response.responseVariantId == null))
+                // Check if there are unanswered questions
+                if (responses == null || responses.Select(r => r.questionId).Distinct().Count() < questions.Count)
                 {
-
                     await DisplayAlert("Alertă", "Vă rugăm să răspundeți la toate întrebările", "OK");
                     currentQuestionIndex = 0;
                     UpdateQuestionView();
@@ -811,6 +809,7 @@ namespace IntSurvey
                 }
                 await FinalSubmissionLogic(sender, e);
             }
+
         }
         private void SaveSelectedAnswers()
         {
@@ -954,17 +953,21 @@ namespace IntSurvey
                 switch (question.gradingType)
                 {
                     case 1:
-
-
-                        responses.Add(new Response
+                        if (IsRadioButtonAnswered(question.question))
                         {
-                            id = 0,
-                            questionId = questionId,
-                            
-                            alternativeResponse = _page.selectedAnswerForType1 ? true.ToString() : false.ToString(),
-                            comentary = string.Empty
-                        });
+                            var selectedAnswer = selectedAnswersForType1[question.question];
+
+                            responses.Add(new Response
+                            {
+                                id = 0,
+                                questionId = questionId,
+                                alternativeResponse = selectedAnswer.ToString(),
+                                comentary = string.Empty
+                            });
+                        }
                         break;
+
+
 
                     case 2:
                         
@@ -1087,10 +1090,11 @@ namespace IntSurvey
             //     await DisplayAlert("Alertă", "Vă rugăm să răspundeți la toate întrebările înainte de a trimite răspunsul.", "OK");
             // });
         }
-        private bool IsRadioButtonAnswered()
+        private bool IsRadioButtonAnswered(string questionKey)
         {
-            return _page.selectedAnswerForType1;
+            return selectedAnswersForType1.ContainsKey(questionKey);
         }
+
 
 
 
@@ -1130,7 +1134,7 @@ namespace IntSurvey
                 _answer = answer;
                 _normalImage = ImageSource.FromFile(normalImageSource);
                 _clickedImage = ImageSource.FromFile(clickedImageSource);
-                Answer = answer; 
+                Answer = answer;
 
                 _image = new Image
                 {
@@ -1147,7 +1151,6 @@ namespace IntSurvey
                 Content = new StackLayout { Children = { _image } };
             }
 
-
             private void OnImageTapped(object sender, EventArgs e)
             {
                 if (_selectedRadioButton != null)
@@ -1156,7 +1159,7 @@ namespace IntSurvey
                 }
 
                 _selectedRadioButton = this;
-                _page.selectedAnswerForType1 = Answer;
+                _page.selectedAnswersForType1[_page.questions[_page.currentQuestionIndex].question] = Answer;
                 _image.Source = _clickedImage;
             }
 
@@ -1168,7 +1171,7 @@ namespace IntSurvey
                 }
 
                 _selectedRadioButton = this;
-                _page.selectedAnswerForType1 = Answer;
+                _page.selectedAnswersForType1[_page.questions[_page.currentQuestionIndex].question] = Answer;
                 _image.Source = _clickedImage;
             }
 
@@ -1186,12 +1189,10 @@ namespace IntSurvey
                 {
                     _image.HeightRequest = 140;
                     _image.WidthRequest = 140;
-
-
                 }
             }
-
         }
+
 
 
 

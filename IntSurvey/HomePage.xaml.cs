@@ -13,6 +13,7 @@ using Plugin.Connectivity;
 using Grid = Microsoft.Maui.Controls.Grid;
 using Questionnaire = IntSurvey.QuestionModels.Questionnaire;
 
+
 namespace IntSurvey
 {
     public partial class HomePage : ContentPage
@@ -187,26 +188,46 @@ namespace IntSurvey
                                 RootObject oidquestionnaires = JsonConvert.DeserializeObject<RootObject>(cachedOidQuestionnaires);
                                 questionnaireQuestions.Add(oid, oidquestionnaires.questionnaire.questions);
 
+                                Label questionnaireLabel = new Label
+                                {
+                                    Text = questionnaire.name,
+                                    FontSize = 20,
+                                    TextColor = Color.FromHex("#FFFFFF"),
+                                    HorizontalOptions = LayoutOptions.Start,
+                                    VerticalOptions = LayoutOptions.Center,
+                                    Padding = new Thickness(45, 0, 0, 0),
+                                    FontAttributes = FontAttributes.Bold,
+                                    InputTransparent = true,
+                                };
+
+
                                 Button questionnaireButton = new Button
                                 {
                                     Text = questionnaire.name,
+                                    FontSize = 30,
                                     CommandParameter = new QuestionnaireInfo { SelectedOid = oid, CompanyOid = questionnaire.companyOid },
-                                    Margin = new Thickness(10, 10, 10, 10),
-                                    BackgroundColor = Color.FromHex("#2e8c0d"),
-                                    TextColor = Color.FromHex("#000000"),
-                                    BorderColor = Color.FromHex("#000000"),
-                                    BorderWidth = 1,
+                                    Margin = new Thickness(25, 5, 25, 5),
+                                    BackgroundColor = Color.FromHex("#37AA0F"),
+                                    TextColor = Color.FromRgba(0, 0, 0, 0),
                                     CornerRadius = 5,
-                                    Shadow = new Shadow
-                                    {
-                                        Offset = new Point(1, 1),
-                                        Radius = 2,
-                                    }
+
+                                    FontAttributes = FontAttributes.Bold
                                 };
 
                                 questionnaireButton.Clicked += OnQuestionnaireButtonClicked;
 
-                                stackLayout.Children.Add(questionnaireButton);
+                                Grid grid = new Grid();
+                                grid.Children.Add(questionnaireButton);
+                                grid.Children.Add(questionnaireLabel);
+
+
+                                Grid.SetRow(questionnaireButton, 0);
+                                Grid.SetColumn(questionnaireButton, 0);
+                                Grid.SetRow(questionnaireLabel, 0);
+                                Grid.SetColumn(questionnaireLabel, 0);
+
+
+                                stackLayout.Children.Add(grid);
                             }
                         }
                     }
@@ -234,13 +255,13 @@ namespace IntSurvey
 
                         var json = (cachedResponsesJson);
                         var content = new StringContent(json, Encoding.UTF8, "application/json");
-                        var responseMessage = await client.PostAsync("https://dev.edi.md/ISNPSAPI/Mobile/InsertResponses", content);
+                        var responseMessage = await client.PostAsync("https://dev.edi.md/ISNPSAPI/Mobile/InsertResponsesNEW", content);
 
                         if (responseMessage.IsSuccessStatusCode)
                         {
-                            var jsonResponse = await responseMessage.Content.ReadAsStringAsync();
-                            var successMessage = $"Responses submitted successfully.\n\nRequest content:\n{json}\n\nResponse content:\n{jsonResponse}";
-                            await DisplayAlert("Success", successMessage, "OK");
+                            //var jsonResponse = await responseMessage.Content.ReadAsStringAsync();
+                            //var successMessage = $"Responses submitted successfully.\n\nRequest content:\n{json}\n\nResponse content:\n{jsonResponse}";
+                            //await DisplayAlert("Success", successMessage, "OK");
                             
                             SecureStorage.Remove("cached_response");
                             Console.WriteLine("Cached responses sent successfully");
@@ -254,16 +275,32 @@ namespace IntSurvey
             }
         }
 
-        private void OnQuestionnaireButtonClicked(object sender, EventArgs e)
+        private async void OnQuestionnaireButtonClicked(object sender, EventArgs e)
         {
             var questionnaireInfo = (QuestionnaireInfo)((Button)sender).CommandParameter;
             int selectedOid = questionnaireInfo.SelectedOid;
             int companyOid = questionnaireInfo.CompanyOid;
 
-            List<Question> selectedQuestions = questionnaireQuestions[selectedOid];
+            try
+            {
+                // Show the activity indicator
+                loadingRow.Height = new GridLength(1, GridUnitType.Star);
+                loadingOverlay.IsVisible = true;
 
-            Navigation.PushAsync(new QuestionnairePage(selectedQuestions, selectedOid, companyOid));
+                // Load the new page
+                List<Question> selectedQuestions = questionnaireQuestions[selectedOid];
+                await Navigation.PushAsync(new QuestionnairePage(selectedQuestions, selectedOid, companyOid));
+            }
+            finally
+            {
+                // Hide the activity indicator
+               
+                loadingOverlay.IsVisible = false;
+                loadingRow.Height = GridLength.Auto;
+            }
         }
+
+
 
         public class QuestionnaireInfo
         {

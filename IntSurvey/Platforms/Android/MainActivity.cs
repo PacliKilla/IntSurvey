@@ -4,6 +4,7 @@ using Android.OS;
 using Android.Widget;
 using Microsoft.Maui.Controls.Compatibility.Platform.Android;
 using Microsoft.Maui.Controls;
+using Android.Views;
 
 namespace IntSurvey
 {
@@ -16,7 +17,8 @@ namespace IntSurvey
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-
+            Window.AddFlags(WindowManagerFlags.Fullscreen);
+            Window.ClearFlags(WindowManagerFlags.ForceNotFullscreen);
         }
 
         public override void OnBackPressed()

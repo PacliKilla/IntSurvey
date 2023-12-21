@@ -1,11 +1,10 @@
-﻿using Microsoft.Extensions.Logging;
-using CommunityToolkit.Maui;
-using Microsoft.Maui;
+﻿using Microsoft.Maui;
 using Microsoft.Maui.Hosting;
-using Microsoft.Maui.Controls.Compatibility;
 using Microsoft.Maui.Controls.Hosting;
 using Microsoft.Maui.Controls.Xaml;
-
+using CommunityToolkit.Maui;
+using Microsoft.Extensions.Logging;
+using SkiaSharp.Views.Maui.Controls.Hosting;
 
 namespace IntSurvey
 {
@@ -16,24 +15,31 @@ namespace IntSurvey
             var builder = MauiApp.CreateBuilder();
             builder
                 .UseMauiApp<App>()
+                .UseSkiaSharp()
                 .ConfigureFonts(fonts =>
-            {
-                fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
-                fonts.AddFont("Roboto-Regular.ttf", "Roboto");
-                fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
-            }).UseMauiCommunityToolkit();
+                {
+                    fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
+                    fonts.AddFont("Roboto-Regular.ttf", "Roboto");
+                    fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
+                })
+                .UseMauiCommunityToolkit();
+
             Microsoft.Maui.Handlers.EntryHandler.Mapper.AppendToMapping(nameof(Entry), (handler, view) =>
             {
-#if ANDROID
-            handler.PlatformView.SetBackgroundColor(Android.Graphics.Color.Transparent);
-#endif
+                // Platform-specific handling if needed
             });
+
+#if ANDROID
+            builder.ConfigureMauiHandlers(handlers =>
+            {
+                handlers.AddHandler(typeof(Shell), typeof(IntSurvey.Platforms.Android.CustomShellRenderer));
+            });
+#endif
+
 #if DEBUG
             builder.Logging.AddDebug();
 #endif
             return builder.Build();
-
         }
-
     }
 }

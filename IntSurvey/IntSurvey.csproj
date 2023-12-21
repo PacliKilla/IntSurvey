@@ -71,6 +71,7 @@
 	  <None Remove="Assets\false_img.png" />
 	  <None Remove="Assets\false_img1.png" />
 	  <None Remove="Assets\false_img_.png" />
+	  <None Remove="Assets\home_button.png" />
 	  <None Remove="Assets\trueimage.png" />
 	  <None Remove="Assets\true_clicked.png" />
 	  <None Remove="Assets\true_clicked.svg" />
@@ -104,13 +105,16 @@
 	  <None Remove="Resources\Images\trueimage.gif" />
 	  <None Remove="Resources\Images\trueimage.png" />
 	  <None Remove="Resources\Images\true_img.png" />
+	  <None Remove="Resources\Raw\loading_animation.json" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Maui" Version="6.1.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
+		<PackageReference Include="Microsoft.Maui.Graphics.Skia" Version="7.0.96" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 		<PackageReference Include="Plugin.Toast" Version="2.2.0" />
+		<PackageReference Include="SkiaSharp.Extended.UI.Maui" Version="2.0.0-preview.86" />
 		<PackageReference Include="Xam.Plugin.Connectivity" Version="3.2.0" />
 		<PackageReference Include="Xamarin.Essentials" Version="1.8.0" />
 	</ItemGroup>
@@ -120,6 +124,9 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="QuestionnairePage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Resources\Styles\RadioButtonStyles.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="SecondPage.xaml">
@@ -144,6 +151,7 @@
 	  <MauiImage Include="Assets\false_clicked1.png" />
 	  <MauiImage Include="Assets\false_img.png" />
 	  <MauiImage Include="Assets\false_img1.png" />
+	  <MauiImage Include="Assets\home_button.png" />
 	  <MauiImage Include="Assets\true_clicked.png" />
 	  <MauiImage Include="Assets\true_clicked1.png" />
 	  <MauiImage Include="Assets\true_img.png" />

@@ -62,15 +62,46 @@ namespace IntSurvey
 
             var counterLabel = new Label
             {
-                FontSize = 32,
-                TextColor = Color.FromHex("#000000"),
-                HorizontalOptions = LayoutOptions.Center,
-                VerticalOptions = LayoutOptions.Start,
-                Margin = new Thickness(10, 10, 10, 0),
+                FontSize = 20,
+                TextColor = Color.FromHex("#FFFFFF"),
+                HorizontalOptions = LayoutOptions.CenterAndExpand,
+                VerticalOptions = LayoutOptions.CenterAndExpand,
+                Margin = new Thickness(0, 0, 0, 0),
+                Text = $"{currentQuestionIndex + 1}/{questions.Count}",
+                HorizontalTextAlignment = TextAlignment.Center
+
             };
 
-            counterLabel.Text = $"{currentQuestionIndex + 1}/{questions.Count}";
-            stackLayout.Children.Add(counterLabel);
+            var homeButton = new Image
+            {
+                Source = "Assets/home_button.png", // Replace with your actual image file path or resource name
+                Aspect = Aspect.AspectFit,
+                HeightRequest = 24, // Adjust the height as needed
+                WidthRequest = 24, // Adjust the width as needed
+                Margin = new Thickness(0, 0, 20, 0),
+            };
+
+            var tapGestureRecognizer = new TapGestureRecognizer();
+            tapGestureRecognizer.Tapped += async (sender, e) =>
+            {
+                await Navigation.PopAsync();
+            };
+
+            homeButton.GestureRecognizers.Add(tapGestureRecognizer);
+
+            var titleView = new StackLayout
+            {
+                HorizontalOptions = LayoutOptions.FillAndExpand,
+                VerticalOptions = LayoutOptions.FillAndExpand,
+                Orientation = StackOrientation.Horizontal,
+                Children = { counterLabel, homeButton }
+            };
+
+            // Set the titleView as the TitleView of the NavigationPage
+            NavigationPage.SetTitleView(this, titleView);
+
+
+
 
             var contentContainer = new StackLayout
             {
@@ -91,42 +122,52 @@ namespace IntSurvey
                 FontSize = 25,
                 TextColor = Color.FromHex("#FFFFFF"),
                 BackgroundColor = Color.FromHex("#37AA0F"),
-                Margin = new Thickness(10, 10, 10, 45),
+                Margin = new Thickness(10, 30, 10, 45),
                 BorderColor = Color.FromHex("#000000"),
                 CornerRadius = 5,
                 WidthRequest = App.Current.MainPage.Width / 3,
                 HeightRequest = 65,
-                VerticalOptions = LayoutOptions.End,
+                
+                
 
             };
 
             submitButton.Clicked += OnSubmitButtonClicked;
             stackLayout.Children.Add(submitButton);
 
+            RestoreSelectedAnswers();
+
+        }
+
+        private void RestoreSelectedAnswers()
+        {
             if (selectedAnswers.ContainsKey(questions[currentQuestionIndex].question))
             {
                 var selectedAnswer = selectedAnswers[questions[currentQuestionIndex].question];
-                bool localSelectedAnswerForType1 = selectedAnswersForType1[questions[currentQuestionIndex].question];
 
                 switch (questions[currentQuestionIndex].gradingType)
                 {
                     case 1:
-                        if (localSelectedAnswerForType1 != null && localSelectedAnswerForType1 is bool answerForType1)
+                        if (selectedAnswersForType1.ContainsKey(questions[currentQuestionIndex].question))
                         {
-                            selectedAnswersForType1[questions[currentQuestionIndex].question] = answerForType1;
+                            var questionKey = questions[currentQuestionIndex].question;
+                            bool localSelectedAnswerForType1 = selectedAnswersForType1[questionKey];
 
-                            if (lastRadioButtonStackLayout != null)
+                            if (localSelectedAnswerForType1 != null && localSelectedAnswerForType1 is bool answerForType1)
                             {
-                                var questionKey = questions[currentQuestionIndex].question;
+                                selectedAnswersForType1[questionKey] = answerForType1;
 
-                                if (selectedAnswersForType1.TryGetValue(questionKey, out var savedAnswer))
+                                if (lastRadioButtonStackLayout != null)
                                 {
-                                    foreach (var child in lastRadioButtonStackLayout.Children)
+                                    if (selectedAnswersForType1.TryGetValue(questionKey, out var savedAnswer))
                                     {
-                                        if (child is ImageRadioButton radioButton && radioButton.Answer == savedAnswer)
+                                        foreach (var child in lastRadioButtonStackLayout.Children)
                                         {
-                                            radioButton.SimulateTap();
-                                            break; // No need to continue checking other radio buttons
+                                            if (child is ImageRadioButton radioButton && radioButton.Answer == savedAnswer)
+                                            {
+                                                radioButton.SimulateTap();
+                                                break; // No need to continue checking other radio buttons
+                                            }
                                         }
                                     }
                                 }
@@ -134,15 +175,10 @@ namespace IntSurvey
                         }
                         break;
 
-
-
-
                     case 2:
                         if (selectedAnswer != null && selectedAnswer is string answerForType2)
                         {
-
                             selectedAnswersForType2[questions[currentQuestionIndex].question] = answerForType2;
-
 
                             if (lastTenPointScoreStackLayout != null)
                             {
@@ -150,7 +186,6 @@ namespace IntSurvey
                                 {
                                     if (child is Button button && button.Text == answerForType2)
                                     {
-                                        
                                         if (selectedButton != null && selectedButton != button)
                                         {
                                             selectedButton.FontSize = 30;
@@ -160,7 +195,6 @@ namespace IntSurvey
                                         button.FontSize = 45;
                                         selectedButton = button;
 
-                                        
                                         SetSelectedButtonStyle(button);
                                         Device.BeginInvokeOnMainThread(() =>
                                         {
@@ -188,10 +222,9 @@ namespace IntSurvey
                                         {
                                             if (element is StackLayout checkboxLayout)
                                             {
-                                                var answerCheckBox = checkboxLayout.Children.OfType<CheckBox>().FirstOrDefault();
+                                                var answerCheckBox = checkboxLayout.Children.OfType<RadioButton>().FirstOrDefault();
                                                 var answerLabel = checkboxLayout.Children.OfType<Label>().FirstOrDefault();
 
-                                                // Check if the answerVariant matches the selected answer
                                                 var answerVariant = questions[currentQuestionIndex].responseVariants
                                                     .FirstOrDefault(av => av.response == answerLabel?.Text);
 
@@ -217,10 +250,6 @@ namespace IntSurvey
                         }
                         break;
 
-
-
-
-
                     case 4:
                         if (selectedAnswer != null && selectedAnswer is HashSet<string> answerForType4)
                         {
@@ -240,10 +269,8 @@ namespace IntSurvey
                                                 {
                                                     if (innerElement is CheckBox answerCheckBox)
                                                     {
-                                                        
                                                         var answerLabel = checkboxLayout.Children.OfType<Label>().FirstOrDefault();
 
-                                                        
                                                         var answerVariant = questions[currentQuestionIndex].responseVariants
                                                             .FirstOrDefault(av => av.response == answerLabel.Text);
 
@@ -261,15 +288,11 @@ namespace IntSurvey
                             }
                         }
                         break;
-
-
-
-
-
                 }
             }
-
         }
+
+
 
         public QuestionnairePage(List<Question> questions, int questionnaireOid, int companyOid)
         {
@@ -279,19 +302,46 @@ namespace IntSurvey
             _page = this;
 
             InitializeComponent();
-            NavigationPage.SetHasNavigationBar(this, false);
+
             var counterLabel = new Label
             {
-                FontSize = 32,
-                TextColor = Color.FromHex("#000000"),
-                HorizontalOptions = LayoutOptions.Center,
-                VerticalOptions = LayoutOptions.Start,
-                Margin = new Thickness(10, 10, 10, 10),
+                FontSize = 20,
+                TextColor = Color.FromHex("#FFFFFF"),
+                HorizontalOptions = LayoutOptions.CenterAndExpand,
+                VerticalOptions = LayoutOptions.CenterAndExpand,
+                Margin = new Thickness(0, 0, 0, 0),
+                Text = $"{currentQuestionIndex + 1}/{questions.Count}",
+                HorizontalTextAlignment = TextAlignment.Center
+
             };
 
+            var backButton = new Image
+            {
+                Source = "Assets/home_button.png", 
+                Aspect = Aspect.AspectFit,
+                HeightRequest = 24, 
+                WidthRequest = 24, 
+                Margin = new Thickness(0, 0, 20, 0),
+            };
 
-            counterLabel.Text = $"{currentQuestionIndex + 1}/{questions.Count}";
-            stackLayout.Children.Add(counterLabel);
+            var tapGestureRecognizer = new TapGestureRecognizer();
+            tapGestureRecognizer.Tapped += async (sender, e) =>
+            {
+                await Navigation.PopAsync();
+            };
+
+            backButton.GestureRecognizers.Add(tapGestureRecognizer);
+
+            var titleView = new StackLayout
+            {
+                HorizontalOptions = LayoutOptions.FillAndExpand,
+                VerticalOptions = LayoutOptions.FillAndExpand,
+                Orientation = StackOrientation.Horizontal,
+                Children = { counterLabel, backButton }
+            };
+
+            // Set the titleView as the TitleView of the NavigationPage
+            NavigationPage.SetTitleView(this, titleView);
 
             var carouselView = new CarouselView
             {
@@ -302,7 +352,7 @@ namespace IntSurvey
                     var questionContent = new ContentView
                     {
                         Content = CreateQuestionView(questions[currentQuestionIndex]),
-                        Padding = new Thickness(10)
+                        Padding = new Thickness(10,0,0,50)
                     };
                     return questionContent;
                 })
@@ -323,12 +373,13 @@ namespace IntSurvey
                 FontSize = 25,
                 TextColor = Color.FromHex("#FFFFFF"),
                 BackgroundColor = Color.FromHex("#37AA0F"),
-                Margin = new Thickness(10, 10, 10, 45),
+                Margin = new Thickness(10, 30, 10, 45),
                 BorderColor = Color.FromHex("#000000"),
                 CornerRadius = 5,
                 WidthRequest = App.Current.MainPage.Width / 3,
                 HeightRequest = 65,
-                VerticalOptions = LayoutOptions.End,
+                
+                
 
             };
 
@@ -358,16 +409,21 @@ namespace IntSurvey
                 FormattedText = new FormattedString
                 {
                     Spans =
-                {
-                    new Span { Text = question.question, FontAttributes = FontAttributes.Bold, FontSize = 48,FontFamily="Roboto"},
-                    new Span { Text = Environment.NewLine },
-                    new Span { Text = "(" + question.comentary + ")" , FontSize = 32,FontFamily="Roboto"},
-                    new Span { Text = Environment.NewLine }
-                }
+        {
+            new Span { Text = question.question, FontAttributes = FontAttributes.Bold, FontSize = 48, FontFamily = "Roboto" },
+            new Span { Text = Environment.NewLine },
+        }
                 },
                 TextColor = Color.FromHex("#000000"),
                 FontSize = 16
             };
+
+            if (question.comentary.Length >= 3)
+            {
+                questionLabel.FormattedText.Spans.Add(new Span { Text = Environment.NewLine });
+                questionLabel.FormattedText.Spans.Add(new Span { Text = "(" + question.comentary + ")", FontSize = 32, FontFamily = "Roboto" });
+            }
+
 
             questionFrame.Content = questionLabel;
 
@@ -558,18 +614,17 @@ namespace IntSurvey
             {
                 Orientation = StackOrientation.Horizontal,
                 Spacing = 10,
-               
-
             };
 
             answerStackLayout.Children.Add(currentRowStackLayout);
 
             foreach (var answerVariant in question.responseVariants)
             {
-                var answerCheckBox = new CheckBox
+                var answerCheckBox = new RadioButton
                 {
-                    Color = Color.FromHex("#37AA0F"),
-                    Scale = 1.8,
+                    BackgroundColor = Color.FromRgba(0, 0, 0, 0),
+                    Scale = 1.5,
+                    VerticalOptions = LayoutOptions.Start,
                 };
 
                 var answerLabel = new Label
@@ -577,7 +632,7 @@ namespace IntSurvey
                     Text = answerVariant.response,
                     FontSize = 32,
                     TextColor = Color.FromHex("#000000"),
-                    VerticalOptions = LayoutOptions.Center,
+                    VerticalOptions = LayoutOptions.Start,
                     Padding = new Thickness(0, 0, 20, 0),
                 };
 
@@ -595,9 +650,9 @@ namespace IntSurvey
                                     {
                                         foreach (var innerElement in checkboxLayout.Children)
                                         {
-                                            if (innerElement is CheckBox otherCheckBox && otherCheckBox != answerCheckBox)
+                                            if (innerElement is RadioButton otherRadioButton && otherRadioButton != answerCheckBox)
                                             {
-                                                otherCheckBox.IsChecked = false;
+                                                otherRadioButton.IsChecked = false;
                                             }
                                         }
                                     }
@@ -606,18 +661,23 @@ namespace IntSurvey
                         }
 
                         selectedAnswersForType3[question.question] = answerVariant.id.ToString();
-
                     }
                     else
                     {
                         selectedAnswersForType3.Remove(question.question);
-                        
                     }
                 };
 
+                var labelTapGestureRecognizer = new TapGestureRecognizer();
+                labelTapGestureRecognizer.Tapped += (s, e) =>
+                {
+                    answerCheckBox.IsChecked = !answerCheckBox.IsChecked;
+                };
+
+                answerLabel.GestureRecognizers.Add(labelTapGestureRecognizer);
+
                 double labelWidthPercentage = 0.4;
                 double labelWidth = DeviceDisplay.MainDisplayInfo.Width * labelWidthPercentage;
-
 
                 answerLabel.WidthRequest = labelWidth;
 
@@ -652,6 +712,10 @@ namespace IntSurvey
 
 
 
+
+
+
+
         private StackLayout CreateMultipleAnswerVariantAnswerView(Question question)
         {
             HashSet<string> localMultipleAnswers = new HashSet<string>();
@@ -670,7 +734,6 @@ namespace IntSurvey
             {
                 Orientation = StackOrientation.Horizontal,
                 Spacing = 10,
-
             };
 
             answerStackLayout.Children.Add(currentRowStackLayout);
@@ -708,9 +771,27 @@ namespace IntSurvey
                     selectedAnswersForType4[question.question] = new HashSet<string>(localMultipleAnswers);
                 };
 
+                var labelTapGestureRecognizer = new TapGestureRecognizer();
+                labelTapGestureRecognizer.Tapped += (s, e) =>
+                {
+                    answerCheckBox.IsChecked = !answerCheckBox.IsChecked;
+
+                    if (answerCheckBox.IsChecked)
+                    {
+                        localMultipleAnswers.Add(answerVariant.id.ToString());
+                    }
+                    else
+                    {
+                        localMultipleAnswers.Remove(answerVariant.id.ToString());
+                    }
+
+                    selectedAnswersForType4[question.question] = new HashSet<string>(localMultipleAnswers);
+                };
+
+                answerLabel.GestureRecognizers.Add(labelTapGestureRecognizer);
+
                 double labelWidthPercentage = 0.8;
                 double labelWidth = DeviceDisplay.MainDisplayInfo.Width * labelWidthPercentage;
-
 
                 answerLabel.WidthRequest = labelWidth;
 
@@ -740,11 +821,18 @@ namespace IntSurvey
             return answerStackLayout;
         }
 
+
+
         private async void OnSubmitButtonClicked(object sender, EventArgs e)
         {
             var responses = GetResponseData(answerStackLayout);
 
             SaveSelectedAnswers();
+            if (!IsCurrentQuestionAnswered())
+            {
+                await DisplayAlert("Alertă", "Vă rugăm să răspundeți la întrebare.", "OK");
+                return;
+            }
 
             currentQuestionIndex++;
 
@@ -753,16 +841,43 @@ namespace IntSurvey
                 stackLayout.Children.Clear();
                 var counterLabel = new Label
                 {
-                    FontSize = 32,
-                    TextColor = Color.FromHex("#000000"),
-                    HorizontalOptions = LayoutOptions.Center,
-                    VerticalOptions = LayoutOptions.Start,
-                    Margin = new Thickness(10, 10, 10, 10),
+                    FontSize = 20,
+                    TextColor = Color.FromHex("#FFFFFF"),
+                    HorizontalOptions = LayoutOptions.CenterAndExpand,
+                    VerticalOptions = LayoutOptions.CenterAndExpand,
+                    Margin = new Thickness(0, 0, 0, 0),
+                    Text = $"{currentQuestionIndex + 1}/{questions.Count}",
+                    HorizontalTextAlignment = TextAlignment.Center
+
                 };
 
-                // Update the counter label text for the current question index
-                counterLabel.Text = $"{currentQuestionIndex + 1}/{questions.Count}";
-                stackLayout.Children.Add(counterLabel);
+                var backButton = new Image
+                {
+                    Source = "Assets/home_button.png", // Replace with your actual image file path or resource name
+                    Aspect = Aspect.AspectFit,
+                    HeightRequest = 24, // Adjust the height as needed
+                    WidthRequest = 24, // Adjust the width as needed
+                    Margin = new Thickness(0, 0, 20, 0),
+                };
+
+                var tapGestureRecognizer = new TapGestureRecognizer();
+                tapGestureRecognizer.Tapped += async (sender, e) =>
+                {
+                    await Navigation.PopAsync();
+                };
+
+                backButton.GestureRecognizers.Add(tapGestureRecognizer);
+
+                var titleView = new StackLayout
+                {
+                    HorizontalOptions = LayoutOptions.FillAndExpand,
+                    VerticalOptions = LayoutOptions.FillAndExpand,
+                    Orientation = StackOrientation.Horizontal,
+                    Children = { counterLabel, backButton }
+                };
+
+                // Set the titleView as the TitleView of the NavigationPage
+                NavigationPage.SetTitleView(this, titleView);
 
                 stackLayout.Children.Add(new ContentView
                 {
@@ -783,11 +898,12 @@ namespace IntSurvey
                     FontSize = 25,
                     TextColor = Color.FromHex("#FFFFFF"),
                     BackgroundColor = Color.FromHex("#37AA0F"),
-                    Margin = new Thickness(10, 10, 10, 45),
+                    Margin = new Thickness(10, 30, 10, 45),
                     BorderColor = Color.FromHex("#000000"),
                     CornerRadius = 5,
                     WidthRequest = App.Current.MainPage.Width / 3,
                     HeightRequest = 65,
+                    
 
                 };
 
@@ -795,6 +911,7 @@ namespace IntSurvey
 
                 stackLayout.Children.Add(submitButton);
 
+                RestoreSelectedAnswers();
 
             }
             else
@@ -803,12 +920,21 @@ namespace IntSurvey
                 if (responses == null || responses.Select(r => r.questionId).Distinct().Count() < questions.Count)
                 {
                     await DisplayAlert("Alertă", "Vă rugăm să răspundeți la toate întrebările", "OK");
-                    currentQuestionIndex = 0;
+
+                    // Find the first unanswered question
+                    var firstUnansweredQuestionIndex = questions.FindIndex(q => responses == null || responses.All(r => r.questionId != q.id));
+
+                    if (firstUnansweredQuestionIndex != -1)
+                    {
+                        currentQuestionIndex = firstUnansweredQuestionIndex;
+                    }
+
                     UpdateQuestionView();
                     return;
                 }
                 await FinalSubmissionLogic(sender, e);
             }
+
 
         }
         private void SaveSelectedAnswers()
@@ -1030,66 +1156,7 @@ namespace IntSurvey
             return responses;
         }
 
-        List<string> GetSelectedAnswers(Question question, StackLayout answerStackLayout, ref string selectedAnswer, HashSet<string> multipleAnswers)
-        {
-            var answers = new List<string>();
-
-            switch (question.gradingType)
-            {
-                case 1:
-
-
-                    answers.Add(selectedAnswerForType1.ToString());
-                    break;
-
-
-                case 2:
-                    if (!IsTenPointScoreAnswered(question.question))
-                    {
-                        DisplayUnansweredQuestionAlert();
-                        return null;
-                    }
-
-                    answers.Add(selectedAnswersForType2[question.question]);
-                    break;
-
-
-                case 3:
-                    if (!IsSingleAnswerVariantAnswered(question.question))
-                    {
-                        DisplayUnansweredQuestionAlert();
-                        return null;
-                    }
-
-                    answers.Add(selectedAnswersForType3[question.question]);
-                    break;
-
-
-                case 4:
-                    if (!IsMultipleAnswerVariantAnswered(question.question))
-                    {
-                        DisplayUnansweredQuestionAlert();
-                        return null;
-                    }
-
-                    answers.AddRange(selectedAnswersForType4[question.question]);
-                    break;
-
-
-                default:
-
-                    break;
-            }
-
-            return answers;
-        }
-        private void DisplayUnansweredQuestionAlert()
-        {
-            //Device.BeginInvokeOnMainThread(async () =>
-            // {
-            //     await DisplayAlert("Alertă", "Vă rugăm să răspundeți la toate întrebările înainte de a trimite răspunsul.", "OK");
-            // });
-        }
+        
         private bool IsRadioButtonAnswered(string questionKey)
         {
             return selectedAnswersForType1.ContainsKey(questionKey);
@@ -1193,7 +1260,30 @@ namespace IntSurvey
             }
         }
 
+        private bool IsCurrentQuestionAnswered()
+        {
+            // Get the current question
+            var currentQuestion = questions[currentQuestionIndex];
 
+            // Check if the current question has been answered based on its type
+            switch (currentQuestion.gradingType)
+            {
+                case 1:
+                    return IsRadioButtonAnswered(currentQuestion.question);
+
+                case 2:
+                    return IsTenPointScoreAnswered(currentQuestion.question);
+
+                case 3:
+                    return IsSingleAnswerVariantAnswered(currentQuestion.question);
+
+                case 4:
+                    return IsMultipleAnswerVariantAnswered(currentQuestion.question);
+
+                default:
+                    return false;
+            }
+        }
 
 
 

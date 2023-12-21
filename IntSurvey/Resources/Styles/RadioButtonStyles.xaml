@@ -1,0 +1,14 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                    xmlns:local="clr-namespace:YourNamespace">
+
+    <Style TargetType="RadioButton" x:Key="CustomRadioButtonStyle">
+        <Setter Property="Color" Value="#37AA0F" />
+        <!-- Set your desired color here -->
+        <Setter Property="BackgroundColor" Value="Transparent" />
+        <Setter Property="Scale" Value="1.8" />
+        <Setter Property="VerticalOptions" Value="Start" />
+        <!-- Add any other properties you want to customize -->
+    </Style>
+
+</ResourceDictionary>

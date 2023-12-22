@@ -61,6 +61,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Remove="Assets\back_button.png" />
 	  <None Remove="Assets\checkbox_true.png" />
 	  <None Remove="Assets\checked_checkbox.png" />
 	  <None Remove="Assets\falseimage.png" />
@@ -144,6 +145,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiImage Include="Assets\back_button.png" />
 	  <MauiImage Include="Assets\checkbox_true.png" />
 	  <MauiImage Include="Assets\checked_checkbox.png" />
 	  <MauiImage Include="Assets\false_clicked.png" />

@@ -12,11 +12,28 @@
             </Style>
         </ResourceDictionary>
     </ContentPage.Resources>
-    <ScrollView>
-        <StackLayout x:Name="stackLayout">
-            
-        </StackLayout>
-    </ScrollView>
-    
-</ContentPage>
 
+    <Grid>
+        <ScrollView>
+            <StackLayout x:Name="stackLayout">
+                <!-- Your other content goes here -->
+            </StackLayout>
+        </ScrollView>
+
+        <!-- Submit button at the bottom -->
+        <Button Text="Înainte"
+                FontSize="25"
+                TextColor="White"
+                BackgroundColor="#37AA0F"
+                
+                BorderColor="Black"
+                CornerRadius="5"
+                WidthRequest="275"
+                HeightRequest="65"
+                Margin="0,0,0,50"
+                VerticalOptions="End"
+                HorizontalOptions="FillAndExpand"
+                Clicked="OnSubmitButtonClicked"/>
+    </Grid>
+
+</ContentPage>

@@ -9,6 +9,7 @@ using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
 using System.Threading;
 using System.Diagnostics;
+using Microsoft.Maui.Controls;
 
 namespace IntSurvey
 {
@@ -72,22 +73,22 @@ namespace IntSurvey
 
             };
 
-            var homeButton = new Image
+            var homeButton = new ImageButton
             {
                 Source = "Assets/home_button.png", // Replace with your actual image file path or resource name
-                Aspect = Aspect.AspectFit,
-                HeightRequest = 24, // Adjust the height as needed
-                WidthRequest = 24, // Adjust the width as needed
-                Margin = new Thickness(0, 0, 20, 0),
+                BackgroundColor = Color.FromRgba(0, 0, 0, 0), // Set the background color to transparent
+                Padding = new Thickness(20, 0, 20, 0),
+                HeightRequest = 100, // Adjust the height as needed
+                WidthRequest = 100, // Adjust the width as needed
+                
+                Margin = new Thickness(0, 0, -20, 0),
             };
 
-            var tapGestureRecognizer = new TapGestureRecognizer();
-            tapGestureRecognizer.Tapped += async (sender, e) =>
+            homeButton.Clicked += async (sender, e) =>
             {
                 await Navigation.PopAsync();
             };
 
-            homeButton.GestureRecognizers.Add(tapGestureRecognizer);
 
             var titleView = new StackLayout
             {
@@ -118,22 +119,11 @@ namespace IntSurvey
 
             Button submitButton = new Button
             {
-                Text = "Înainte",
-                FontSize = 25,
-                TextColor = Color.FromHex("#FFFFFF"),
-                BackgroundColor = Color.FromHex("#37AA0F"),
-                Margin = new Thickness(10, 30, 10, 45),
-                BorderColor = Color.FromHex("#000000"),
-                CornerRadius = 5,
-                WidthRequest = App.Current.MainPage.Width / 3,
-                HeightRequest = 65,
-                
-                
 
             };
 
             submitButton.Clicked += OnSubmitButtonClicked;
-            stackLayout.Children.Add(submitButton);
+
 
             RestoreSelectedAnswers();
 
@@ -315,33 +305,42 @@ namespace IntSurvey
 
             };
 
-            var backButton = new Image
+            var homeButton = new ImageButton
             {
                 Source = "Assets/home_button.png", 
-                Aspect = Aspect.AspectFit,
-                HeightRequest = 24, 
-                WidthRequest = 24, 
-                Margin = new Thickness(0, 0, 20, 0),
+                BackgroundColor = Color.FromRgba(0, 0, 0, 0), 
+                HeightRequest = 100, 
+                WidthRequest = 100, 
+                Padding = new Thickness(20,0,20, 0),
+                Margin = new Thickness(0, 0, -20, 0),
             };
 
-            var tapGestureRecognizer = new TapGestureRecognizer();
-            tapGestureRecognizer.Tapped += async (sender, e) =>
+            homeButton.Clicked += async (sender, e) =>
             {
                 await Navigation.PopAsync();
             };
 
-            backButton.GestureRecognizers.Add(tapGestureRecognizer);
+            // Create a Grid layout
+            var grid = new Grid();
+
+            // Create an invisible column on the left
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+
+            // Add the ImageButton to the second column
+            grid.Children.Add(homeButton);
+            Grid.SetColumn(homeButton, 1); // Set the column after adding the child
 
             var titleView = new StackLayout
             {
                 HorizontalOptions = LayoutOptions.FillAndExpand,
                 VerticalOptions = LayoutOptions.FillAndExpand,
                 Orientation = StackOrientation.Horizontal,
-                Children = { counterLabel, backButton }
+                Children = { counterLabel, grid } // Add the grid instead of homeButton directly
             };
 
             // Set the titleView as the TitleView of the NavigationPage
             NavigationPage.SetTitleView(this, titleView);
+
 
             var carouselView = new CarouselView
             {
@@ -369,25 +368,14 @@ namespace IntSurvey
 
             Button submitButton = new Button
             {
-                Text = "Înainte",
-                FontSize = 25,
-                TextColor = Color.FromHex("#FFFFFF"),
-                BackgroundColor = Color.FromHex("#37AA0F"),
-                Margin = new Thickness(10, 30, 10, 45),
-                BorderColor = Color.FromHex("#000000"),
-                CornerRadius = 5,
-                WidthRequest = App.Current.MainPage.Width / 3,
-                HeightRequest = 65,
-                
-                
 
             };
 
             submitButton.Clicked += OnSubmitButtonClicked;
 
-            stackLayout.Children.Add(submitButton);
 
 
+            
         }
         private void OnBackButtonClicked(object sender, EventArgs e)
         {
@@ -604,7 +592,7 @@ namespace IntSurvey
             {
                 Orientation = StackOrientation.Vertical,
                 Spacing = 10,
-                Padding = new Thickness(30, 10, 0, 0),
+                Padding = new Thickness(30, 10, 0, 150),
             };
 
             int col = 0;
@@ -724,7 +712,7 @@ namespace IntSurvey
             {
                 Orientation = StackOrientation.Vertical,
                 Spacing = 10,
-                Padding = new Thickness(30, 10, 0, 0),
+                Padding = new Thickness(30, 10, 0, 150),
             };
 
             int col = 0;
@@ -851,29 +839,28 @@ namespace IntSurvey
 
                 };
 
-                var backButton = new Image
+                var homeButton = new ImageButton
                 {
                     Source = "Assets/home_button.png", // Replace with your actual image file path or resource name
-                    Aspect = Aspect.AspectFit,
-                    HeightRequest = 24, // Adjust the height as needed
-                    WidthRequest = 24, // Adjust the width as needed
-                    Margin = new Thickness(0, 0, 20, 0),
+                    BackgroundColor = Color.FromRgba(0, 0, 0, 0), // Set the background color to transparent
+                    Padding = new Thickness(20, 0, 20, 0),
+                    HeightRequest = 100, // Adjust the height as needed
+                    WidthRequest = 100, // Adjust the width as needed
+                    Margin = new Thickness(0, 0, -20, 0),
                 };
 
-                var tapGestureRecognizer = new TapGestureRecognizer();
-                tapGestureRecognizer.Tapped += async (sender, e) =>
+                homeButton.Clicked += async (sender, e) =>
                 {
                     await Navigation.PopAsync();
                 };
 
-                backButton.GestureRecognizers.Add(tapGestureRecognizer);
 
                 var titleView = new StackLayout
                 {
                     HorizontalOptions = LayoutOptions.FillAndExpand,
                     VerticalOptions = LayoutOptions.FillAndExpand,
                     Orientation = StackOrientation.Horizontal,
-                    Children = { counterLabel, backButton }
+                    Children = { counterLabel, homeButton }
                 };
 
                 // Set the titleView as the TitleView of the NavigationPage
@@ -894,22 +881,12 @@ namespace IntSurvey
 
                 Button submitButton = new Button
                 {
-                    Text = "Înainte",
-                    FontSize = 25,
-                    TextColor = Color.FromHex("#FFFFFF"),
-                    BackgroundColor = Color.FromHex("#37AA0F"),
-                    Margin = new Thickness(10, 30, 10, 45),
-                    BorderColor = Color.FromHex("#000000"),
-                    CornerRadius = 5,
-                    WidthRequest = App.Current.MainPage.Width / 3,
-                    HeightRequest = 65,
-                    
 
                 };
 
                 submitButton.Clicked += OnSubmitButtonClicked;
 
-                stackLayout.Children.Add(submitButton);
+
 
                 RestoreSelectedAnswers();
 
@@ -1061,6 +1038,10 @@ namespace IntSurvey
                 var json = JsonConvert.SerializeObject(response);
                 await SecureStorage.SetAsync("cached_response", json);
                 await Navigation.PopAsync();
+                CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+                var successMessage = $"Răspunsul a fost salvat cu succes." + Environment.NewLine + "Mulțumim pentru opinia dumneavoastră.";
+                var toast = Toast.Make(successMessage, duration: ToastDuration.Long);
+                await toast.Show(cancellationTokenSource.Token);
             }
             catch (Exception ex)
             {

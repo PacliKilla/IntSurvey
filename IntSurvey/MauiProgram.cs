@@ -26,16 +26,10 @@ namespace IntSurvey
 
             Microsoft.Maui.Handlers.EntryHandler.Mapper.AppendToMapping(nameof(Entry), (handler, view) =>
             {
-                // Platform-specific handling if needed
-            });
-
 #if ANDROID
-            builder.ConfigureMauiHandlers(handlers =>
-            {
-                handlers.AddHandler(typeof(Shell), typeof(IntSurvey.Platforms.Android.CustomShellRenderer));
-            });
+                handler.PlatformView.SetBackgroundColor(Android.Graphics.Color.Transparent);
 #endif
-
+            });
 #if DEBUG
             builder.Logging.AddDebug();
 #endif

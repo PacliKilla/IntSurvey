@@ -19,7 +19,9 @@
         </Grid.RowDefinitions>
 
         <StackLayout x:Name="stackLayout" IsVisible="True">
-            <Label Text="Chestionare" FontFamily="Roboto" FontSize="48" HorizontalOptions="Center" VerticalOptions="Start" Margin="0,40,0,30" FontAttributes="Bold" TextColor="Black"/>
+            <Label x:Name="titleLabel" FontFamily="Roboto" FontSize="48" HorizontalOptions="Center" VerticalOptions="Start" Margin="0,40,0,30" FontAttributes="Bold" TextColor="Black"/>
+
+
 
             <!-- Your other content goes here -->
         </StackLayout>

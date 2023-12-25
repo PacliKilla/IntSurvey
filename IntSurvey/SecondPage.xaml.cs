@@ -60,12 +60,12 @@ public partial class SecondPage : ContentPage
             {
                 string json = client.GetStringAsync(fullURl).Result;
                 keyVM CodeID = JsonConvert.DeserializeObject<keyVM>(json);
-                if (CodeID.id == "00000000-0000-0000-0000-000000000000")
-                {
-                    await DisplayAlert("Alertă", "Cheia introdusă nu este validă..", "OK");
-                   entry1.Text = entry2.Text = entry3.Text = entry4.Text = entry5.Text = entry6.Text = entry7.Text = entry8.Text = entry9.Text = "";
-                   return; 
-                }
+                //if (CodeID.id == "00000000-0000-0000-0000-000000000000")
+                //{
+                //    await DisplayAlert("Alertă", "Cheia introdusă nu este validă..", "OK");
+                //   entry1.Text = entry2.Text = entry3.Text = entry4.Text = entry5.Text = entry6.Text = entry7.Text = entry8.Text = entry9.Text = "";
+                //   return; 
+                //}
 
                 await SecureStorage.SetAsync("LicenseID", CodeID.id);
             }
@@ -81,7 +81,14 @@ public partial class SecondPage : ContentPage
                 }
             }
         }
+        string questionnaireName = await DisplayPromptAsync("Introduceți numele chestionarului", "Numele chestionarului:", initialValue: "Chestionare");
 
+        if (string.IsNullOrWhiteSpace(questionnaireName))
+        {
+            questionnaireName = "Chestionare";
+        }
+
+        await SecureStorage.SetAsync("QuestionnaireName", questionnaireName);
         Navigation.PushAsync(new HomePage());
     }
     private void OnEntryTextChanged(object sender, TextChangedEventArgs e)

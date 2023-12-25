@@ -27,11 +27,26 @@ namespace IntSurvey
         string username = "uSr_nps";
         string password = "V8-}W31S!l'D";
         Root questionnaires;
+        public string QuestionnaireName { get; set; }
+
         public HomePage()
         {
             InitializeComponent();
             NavigationPage.SetHasNavigationBar(this, false);
-            
+
+            BindingContext = this;
+
+            // Retrieve the cached questionnaire name
+            QuestionnaireName = SecureStorage.GetAsync("QuestionnaireName").Result;
+            if (string.IsNullOrEmpty(QuestionnaireName))
+            {
+                // If not available, use a default value
+                QuestionnaireName = "Chestionare";
+            }
+
+            // Set the initial text for the label
+            titleLabel.Text = QuestionnaireName;
+
 
             if (IsInternetConnected())
             {
@@ -41,7 +56,12 @@ namespace IntSurvey
             {
                 LoadQuestionnairesFromCache();
             }
+
+
+
         }
+
+
         protected override void OnAppearing()
         {
             base.OnAppearing();

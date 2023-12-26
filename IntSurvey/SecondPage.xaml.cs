@@ -81,7 +81,7 @@ public partial class SecondPage : ContentPage
                 }
             }
         }
-        string questionnaireName = await DisplayPromptAsync("Introduceți numele chestionarului", "Numele chestionarului:", initialValue: "Chestionare");
+        string questionnaireName = await DisplayPromptAsync("Introduceți numele chestionarului", "Numele chestionarului:", initialValue: "Chestionare", maxLength: 40);
 
         if (string.IsNullOrWhiteSpace(questionnaireName))
         {

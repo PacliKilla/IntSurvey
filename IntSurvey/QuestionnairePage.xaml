@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:local="clr-namespace:IntSurvey"
              x:Class="IntSurvey.QuestionnairePage">
 
     <ContentPage.Resources>
@@ -14,18 +13,54 @@
     </ContentPage.Resources>
 
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <!-- Auto size for the content -->
+            <RowDefinition x:Name="loadingRow" Height="Auto" />
+            <!-- Auto size initially, will be adjusted when the overlay is visible -->
+        </Grid.RowDefinitions>
+
         <ScrollView>
             <StackLayout x:Name="stackLayout">
                 <!-- Your other content goes here -->
             </StackLayout>
         </ScrollView>
 
+        <Frame x:Name="overlayFrame" IsVisible="False" BackgroundColor="#80000000" CornerRadius="0" Grid.RowSpan="2" />
+
+        <!-- Custom Alert Frame -->
+        <Frame x:Name="customAlertFrame" IsVisible="False" BackgroundColor="White" CornerRadius="10"
+               VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
+            <StackLayout>
+                <Label Text="Alertă"
+                       FontAttributes="Bold"
+                       FontSize="24"
+                       FontFamily="Roboto"
+                       Margin="0,15,0,5"
+                       TextColor="Black"
+                       HorizontalOptions="Center"/>
+                <Label Text="Vă rugăm să răspundeți la întrebare."
+                       FontSize="24"
+                       TextColor="Black"
+                       FontFamily="Roboto"
+                        Margin="0,0,0,13"
+                       HorizontalOptions="Center"/>
+                <Button Text="OK"
+                        FontSize="16"
+                        TextColor="White"
+                        BackgroundColor="#37AA0F"
+                        CornerRadius="5"
+                        WidthRequest="500"
+                        HeightRequest="40"
+                        Clicked="OnAlertOKButtonClicked"/>
+            </StackLayout>
+        </Frame>
+
         <!-- Submit button at the bottom -->
         <Button Text="Înainte"
                 FontSize="25"
                 TextColor="White"
                 BackgroundColor="#37AA0F"
-                
                 BorderColor="Black"
                 CornerRadius="5"
                 WidthRequest="275"
@@ -33,7 +68,8 @@
                 Margin="0,0,0,50"
                 VerticalOptions="End"
                 HorizontalOptions="FillAndExpand"
-                Clicked="OnSubmitButtonClicked"/>
+                Clicked="OnSubmitButtonClicked"
+                Grid.Row="1"/>
     </Grid>
 
 </ContentPage>

@@ -809,6 +809,22 @@ namespace IntSurvey
             return answerStackLayout;
         }
 
+        private void ShowCustomAlert()
+        {
+            
+            customAlertFrame.IsVisible = true;
+            overlayFrame.IsVisible = true;
+
+        }
+
+        private void OnAlertOKButtonClicked(object sender, EventArgs e)
+        {
+            customAlertFrame.IsVisible = false;
+            overlayFrame.IsVisible = false;
+
+        }
+
+
 
 
         private async void OnSubmitButtonClicked(object sender, EventArgs e)
@@ -816,9 +832,10 @@ namespace IntSurvey
             var responses = GetResponseData(answerStackLayout);
 
             SaveSelectedAnswers();
+
             if (!IsCurrentQuestionAnswered())
             {
-                await DisplayAlert("Alertă", "Vă rugăm să răspundeți la întrebare.", "OK");
+                ShowCustomAlert();
                 return;
             }
 

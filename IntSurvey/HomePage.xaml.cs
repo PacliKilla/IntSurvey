@@ -34,18 +34,19 @@ namespace IntSurvey
             InitializeComponent();
             NavigationPage.SetHasNavigationBar(this, false);
 
+
+
+
             BindingContext = this;
 
-            // Retrieve the cached questionnaire name
-            QuestionnaireName = SecureStorage.GetAsync("QuestionnaireName").Result;
-            if (string.IsNullOrEmpty(QuestionnaireName))
-            {
-                // If not available, use a default value
-                QuestionnaireName = "Chestionare";
-            }
+            QuestionnaireName = "Chestionare";
 
             // Set the initial text for the label
             titleLabel.Text = QuestionnaireName;
+
+
+
+
 
 
             if (IsInternetConnected())

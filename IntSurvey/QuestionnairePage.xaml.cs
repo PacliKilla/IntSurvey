@@ -814,14 +814,18 @@ namespace IntSurvey
             
             customAlertFrame.IsVisible = true;
             overlayFrame.IsVisible = true;
-
+            submitButton.BackgroundColor = Color.FromHex("#296e11");
+            submitButton.TextColor = Color.FromHex("#a1a1a1");
+            submitButton.InputTransparent = true;
         }
-
+        //InputTransparent = true
         private void OnAlertOKButtonClicked(object sender, EventArgs e)
         {
             customAlertFrame.IsVisible = false;
             overlayFrame.IsVisible = false;
-
+            submitButton.BackgroundColor = Color.FromHex("#37AA0F");
+            submitButton.TextColor = Color.FromHex("#FFFFFF");
+            submitButton.InputTransparent = false;
         }
 
 

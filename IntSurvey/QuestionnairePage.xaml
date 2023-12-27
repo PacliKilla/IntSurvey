@@ -43,21 +43,24 @@
                        FontSize="24"
                        TextColor="Black"
                        FontFamily="Roboto"
-                        Margin="0,0,0,13"
+                       Margin="0,0,0,13"
                        HorizontalOptions="Center"/>
                 <Button Text="OK"
-                        FontSize="16"
+                        FontSize="24"
                         TextColor="White"
                         BackgroundColor="#37AA0F"
                         CornerRadius="5"
-                        WidthRequest="500"
-                        HeightRequest="40"
+                        WidthRequest="600"
+                        Padding="10"
+                        Margin="0,0,0,15"
+                        HeightRequest="60"
                         Clicked="OnAlertOKButtonClicked"/>
             </StackLayout>
         </Frame>
 
         <!-- Submit button at the bottom -->
         <Button Text="Înainte"
+                x:Name="submitButton"
                 FontSize="25"
                 TextColor="White"
                 BackgroundColor="#37AA0F"

@@ -30,7 +30,7 @@ public partial class SecondPage : ContentPage
         BindingContext = this;
         //SecureStorage.Default.RemoveAll();
 
-        testModeCheckBox.IsChecked = Preferences.Get("TestModeChecked", false);
+        
         NavigationPage.SetHasNavigationBar(this, false);
 
 
@@ -42,6 +42,11 @@ public partial class SecondPage : ContentPage
         AppCredentials.Username = username;
         AppCredentials.Password = password;
         AppCredentials.Uri = settingUri;
+
+        serviceInfo = LoadFromCache<ServiceInfo>("ServiceInfo");
+        prodInfo = LoadFromCache<ServiceInfo>("prodInfo");
+
+
 
         string id = SecureStorage.GetAsync("LicenseID").Result;
         if (!string.IsNullOrEmpty(id))
@@ -55,9 +60,26 @@ public partial class SecondPage : ContentPage
 
     private void TestModeCheckBox_CheckedChanged(object sender, CheckedChangedEventArgs e)
     {
-        Preferences.Set("TestModeChecked", testModeCheckBox.IsChecked);
-        // Reinitialize HttpClient when checkbox state changes
-        InitializeHttpClient();
+        
+        
+
+        // When unchecked, attribute values from prodInfo
+        if (testModeCheckBox.IsChecked)
+        {
+            baseURL = $"{serviceInfo.ServiceUri}/Mobile/ActivateDevice?ActivationCode=";
+            username = serviceInfo.User;
+            password = serviceInfo.Password;
+            settingUri = serviceInfo.ServiceUri;
+        }
+        else
+        {
+            baseURL = $"{prodInfo.ServiceUri}/Mobile/ActivateDevice?ActivationCode=";
+            username = prodInfo.User;
+            password = prodInfo.Password;
+            settingUri = prodInfo.ServiceUri;
+        }
+
+
     }
 
     public async void InitializeHttpClient()
@@ -122,10 +144,7 @@ public partial class SecondPage : ContentPage
             string result = GetDecrypt(encodedObj);
             serviceInfo = JsonConvert.DeserializeObject<ServiceInfo>(result);
 
-            baseURL = $"{serviceInfo.ServiceUri}/Mobile/ActivateDevice?ActivationCode=";
-            username = serviceInfo.User;
-            password = serviceInfo.Password;
-            settingUri = serviceInfo.ServiceUri;
+            SaveToCache("ServiceInfo", serviceInfo);
         }
         else
         {
@@ -147,15 +166,36 @@ public partial class SecondPage : ContentPage
             string prodResult = GetDecrypt(prodEncodedObj);
             prodInfo = JsonConvert.DeserializeObject<ServiceInfo>(prodResult);
 
-            baseURL = $"{prodInfo.ServiceUri}/Mobile/ActivateDevice?ActivationCode=";
-            username = prodInfo.User;
-            password = prodInfo.Password;
-            settingUri = prodInfo.ServiceUri;
+            SaveToCache("prodInfo", prodInfo);
         }
 
     }
 
+    private void SaveToCache<T>(string key, T value)
+    {
+        var serializedValue = JsonConvert.SerializeObject(value);
+        SecureStorage.SetAsync(key, serializedValue);
+    }
 
+    // Helper method to load an object from cache
+    private T LoadFromCache<T>(string key)
+    {
+        try
+        {
+            var serializedValue = SecureStorage.GetAsync(key).Result;
+            if (!string.IsNullOrEmpty(serializedValue))
+            {
+                return JsonConvert.DeserializeObject<T>(serializedValue);
+            }
+        }
+        catch (Exception ex)
+        {
+            // Handle exceptions (e.g., when the key doesn't exist)
+            Console.WriteLine($"Error loading from cache: {ex.Message}");
+        }
+
+        return default(T);
+    }
 
 
 

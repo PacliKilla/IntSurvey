@@ -75,7 +75,7 @@ namespace IntSurvey.QuestionModels
         public string Password { get; set; }
     }
 
-    public static class AppCredentials
+    public class AppCredentials
     {
         public static string Username { get; set; }
         public static string Password { get; set; }

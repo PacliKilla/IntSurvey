@@ -20,12 +20,13 @@ namespace IntSurvey
     {
         Dictionary<int, List<Question>> questionnaireQuestions = new Dictionary<int, List<Question>>();
         string cachedID = SecureStorage.GetAsync("LicenseID").Result;
-        public string baseLink = "https://dev.edi.md/ISNPSAPI/Mobile/GetQuestionnairesNEW?LicenseID=";
-        public string baseOidLink = "https://dev.edi.md/ISNPSAPI/Mobile/GetQuestionnaireNEW?LicenseId=";
+
+        public string baseLink = $"{AppCredentials.Uri}/Mobile/GetQuestionnairesNEW?LicenseID=";
+        public string baseOidLink = $"{AppCredentials.Uri}/Mobile/GetQuestionnaireNEW?LicenseId=";
         public string licenseIDLink => $"{baseLink}{cachedID}";
         public string OidLink => $"{baseOidLink}{cachedID}";
-        string username = "uSr_nps";
-        string password = "V8-}W31S!l'D";
+        string username = AppCredentials.Username;
+        string password = AppCredentials.Password;
         Root questionnaires;
         public string QuestionnaireName { get; set; }
 
@@ -41,7 +42,6 @@ namespace IntSurvey
 
             QuestionnaireName = "Chestionare";
 
-            // Set the initial text for the label
             titleLabel.Text = QuestionnaireName;
 
 

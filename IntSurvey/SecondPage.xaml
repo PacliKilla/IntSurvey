@@ -58,6 +58,9 @@
                        TextChanged="OnEntryTextChanged" Keyboard="Numeric" VerticalOptions="Center" Margin="17,0,-8,0" FontSize = "30"/>
             </Frame>
         </StackLayout>
-
+        <StackLayout Orientation="Horizontal" HorizontalOptions="Start" VerticalOptions="End" Margin="10,300">
+            <CheckBox x:Name="testModeCheckBox" VerticalOptions="Center" />
+            <Label Text="Regim de testare" VerticalOptions="Center" FontFamily="Roboto" TextColor="#000000" Margin="5,0,0,0" />
+        </StackLayout>
     </VerticalStackLayout>
 </ContentPage>

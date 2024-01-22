@@ -57,4 +57,29 @@ namespace IntSurvey.QuestionModels
         public int errorCode { get; set; }
         public Questionnaire questionnaire { get; set; }
     }
+
+    public class EncodedObj
+    {
+        public int ErrorCode { get; set; }
+        public string ErrorMessage { get; set; }
+        public string Settings { get; set; }
+        public string URI { get; set; }
+    }
+
+    public class ServiceInfo
+    {
+        public string ServiceUri { get; set; }
+        public string Port { get; set; }
+        public bool Authorization { get; set; }
+        public string User { get; set; }
+        public string Password { get; set; }
+    }
+
+    public static class AppCredentials
+    {
+        public static string Username { get; set; }
+        public static string Password { get; set; }
+        public static string Uri { get; set; }
+    }
+
 }

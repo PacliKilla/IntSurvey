@@ -13,7 +13,7 @@
 		<SingleProject>true</SingleProject>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<RunAOTCompilation>false</RunAOTCompilation>
-		
+		<AotAssemblies>false</AotAssemblies>
 
 		<!-- Display name -->
 		<ApplicationTitle>IntSurvey</ApplicationTitle>
@@ -34,6 +34,14 @@
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
 		<Configurations>Debug;Release;RIlis</Configurations>
 	</PropertyGroup>
+
+
+	<PropertyGroup Condition="$(TargetFramework.Contains('-android')) and '$(Configuration)' == 'Release'">
+		<AndroidSigningKeyStore>myapp.keystore</AndroidSigningKeyStore>
+		<AndroidSigningKeyAlias>myapp</AndroidSigningKeyAlias>
+	</PropertyGroup>
+
+
 
 	<ItemGroup>
 		<!-- App Icon -->

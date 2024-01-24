@@ -30,39 +30,43 @@ public partial class SecondPage : ContentPage
         BindingContext = this;
         //SecureStorage.Default.RemoveAll();
 
-        
         NavigationPage.SetHasNavigationBar(this, false);
-
-
 
         testModeCheckBox.CheckedChanged += TestModeCheckBox_CheckedChanged;
 
+        InitializeAsync(); // Call the asynchronous initialization method
+    }
+
+    private async void InitializeAsync()
+    {
         InitializeHttpClient();
 
         AppCredentials.Username = username;
         AppCredentials.Password = password;
         AppCredentials.Uri = settingUri;
 
-        serviceInfo = LoadFromCache<ServiceInfo>("ServiceInfo");
-        prodInfo = LoadFromCache<ServiceInfo>("prodInfo");
+        serviceInfo = await LoadFromCache<ServiceInfo>("ServiceInfo");
+        prodInfo = await LoadFromCache<ServiceInfo>("prodInfo");
 
-
-
-        string id = SecureStorage.GetAsync("LicenseID").Result;
+        string id = await SecureStorage.GetAsync("LicenseID");
         if (!string.IsNullOrEmpty(id))
         {
-            
             Navigation.PushAsync(new HomePage());
         }
     }
+
+    private void OnFrameTapped(object sender, EventArgs e)
+    {
+
+        testModeCheckBox.IsChecked = !testModeCheckBox.IsChecked;
+    }
+
 
 
 
     private void TestModeCheckBox_CheckedChanged(object sender, CheckedChangedEventArgs e)
     {
         
-        
-
         // When unchecked, attribute values from prodInfo
         if (testModeCheckBox.IsChecked)
         {
@@ -125,8 +129,7 @@ public partial class SecondPage : ContentPage
 
             return AesCrypt.DecryptStringFromText(obj.Settings, k1, keyIV);
         }
-        if (testModeCheckBox.IsChecked)
-        {
+        
             // Use the dev environment
             HttpClient _httpClient = new HttpClient();
 
@@ -145,9 +148,7 @@ public partial class SecondPage : ContentPage
             serviceInfo = JsonConvert.DeserializeObject<ServiceInfo>(result);
 
             SaveToCache("ServiceInfo", serviceInfo);
-        }
-        else
-        {
+       
             // Use the prod environment
             HttpClient prodHttpClient = new HttpClient();
 
@@ -157,7 +158,7 @@ public partial class SecondPage : ContentPage
             prodHttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic",
                 Convert.ToBase64String(Encoding.UTF8.GetBytes("pcfgmnt_usr:1<1W3C@*mgy~")));
 
-            var prodResponse = await prodHttpClient.GetAsync(prodHttpClient.BaseAddress);
+            var prodResponse = prodHttpClient.GetAsync(prodHttpClient.BaseAddress).Result;
             prodResponse.EnsureSuccessStatusCode();
 
             var prodContent = prodResponse.Content.ReadAsStringAsync().Result;
@@ -167,7 +168,7 @@ public partial class SecondPage : ContentPage
             prodInfo = JsonConvert.DeserializeObject<ServiceInfo>(prodResult);
 
             SaveToCache("prodInfo", prodInfo);
-        }
+        
 
     }
 
@@ -178,11 +179,11 @@ public partial class SecondPage : ContentPage
     }
 
     // Helper method to load an object from cache
-    private T LoadFromCache<T>(string key)
+    private async Task<T> LoadFromCache<T>(string key)
     {
         try
         {
-            var serializedValue = SecureStorage.GetAsync(key).Result;
+            var serializedValue = await SecureStorage.GetAsync(key);
             if (!string.IsNullOrEmpty(serializedValue))
             {
                 return JsonConvert.DeserializeObject<T>(serializedValue);
@@ -196,6 +197,7 @@ public partial class SecondPage : ContentPage
 
         return default(T);
     }
+
 
 
 

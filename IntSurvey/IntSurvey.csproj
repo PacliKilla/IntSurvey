@@ -1,5 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
+	
+	
+	<!--dotnet publish -f:net7.0-android -c:Release /p:AndroidSigningKeyPass=199410 /p:AndroidSigningStorePass=199410-->
+	
+	
 	<PropertyGroup>
 		
 		<TargetFrameworks>net7.0-android;net7.0-ios;net7.0-maccatalyst</TargetFrameworks>

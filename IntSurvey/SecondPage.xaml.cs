@@ -54,6 +54,13 @@ public partial class SecondPage : ContentPage
             Navigation.PushAsync(new HomePage());
         }
     }
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+
+        testModeCheckBox.IsChecked = true;
+        testModeCheckBox.IsChecked = !testModeCheckBox.IsChecked;
+    }
 
     private void OnFrameTapped(object sender, EventArgs e)
     {

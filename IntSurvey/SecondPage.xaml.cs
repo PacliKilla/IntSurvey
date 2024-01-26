@@ -72,9 +72,10 @@ public partial class SecondPage : ContentPage
 
 
     private void TestModeCheckBox_CheckedChanged(object sender, CheckedChangedEventArgs e)
+    
     {
         
-        // When unchecked, attribute values from prodInfo
+        
         if (testModeCheckBox.IsChecked)
         {
             baseURL = $"{serviceInfo.ServiceUri}/Mobile/ActivateDevice?ActivationCode=";
@@ -137,7 +138,7 @@ public partial class SecondPage : ContentPage
             return AesCrypt.DecryptStringFromText(obj.Settings, k1, keyIV);
         }
         
-            // Use the dev environment
+            //dev
             HttpClient _httpClient = new HttpClient();
 
             _httpClient.BaseAddress = new Uri("https://dev.edi.md/ISConfigManagerServiceAPI/app/GetServiceURI?Service=38");
@@ -156,7 +157,7 @@ public partial class SecondPage : ContentPage
 
             SaveToCache("ServiceInfo", serviceInfo);
        
-            // Use the prod environment
+            //prod
             HttpClient prodHttpClient = new HttpClient();
 
 
@@ -185,7 +186,6 @@ public partial class SecondPage : ContentPage
         SecureStorage.SetAsync(key, serializedValue);
     }
 
-    // Helper method to load an object from cache
     private async Task<T> LoadFromCache<T>(string key)
     {
         try
@@ -198,7 +198,6 @@ public partial class SecondPage : ContentPage
         }
         catch (Exception ex)
         {
-            // Handle exceptions (e.g., when the key doesn't exist)
             Console.WriteLine($"Error loading from cache: {ex.Message}");
         }
 
@@ -394,7 +393,7 @@ public partial class SecondPage : ContentPage
             !string.IsNullOrEmpty(entry8.Text) &&
             !string.IsNullOrEmpty(entry9.Text))
         {
-            // Trigger the button click event
+            
             btnGoBackToHomePage_Clicked(sender, e);
         }
     }

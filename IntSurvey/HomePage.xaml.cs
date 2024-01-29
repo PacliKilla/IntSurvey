@@ -19,10 +19,12 @@ namespace IntSurvey
     public partial class HomePage : ContentPage
     {
         Dictionary<int, List<Question>> questionnaireQuestions = new Dictionary<int, List<Question>>();
-        string cachedID = SecureStorage.GetAsync("LicenseID").Result;
+        string cachedID = AppCredentials.CacID;
 
         public string baseLink = $"{AppCredentials.Uri}/Mobile/GetQuestionnairesNEW?LicenseID=";
         public string baseOidLink = $"{AppCredentials.Uri}/Mobile/GetQuestionnaireNEW?LicenseId=";
+
+
         public string licenseIDLink => $"{baseLink}{cachedID}";
         public string OidLink => $"{baseOidLink}{cachedID}";
         string username = AppCredentials.Username;
@@ -48,7 +50,6 @@ namespace IntSurvey
 
 
 
-
             if (IsInternetConnected())
             {
                 LoadQuestionnairesFromServer();
@@ -61,6 +62,7 @@ namespace IntSurvey
 
 
         }
+
 
 
         protected override void OnAppearing()

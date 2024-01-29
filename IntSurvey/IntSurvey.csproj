@@ -44,8 +44,8 @@
 		<AndroidKeyStore>True</AndroidKeyStore>
 		<AndroidSigningKeyStore>..\intsurvey.keystore</AndroidSigningKeyStore>
 		<AndroidSigningKeyAlias>intsurvey</AndroidSigningKeyAlias>
-		<AndroidSigningKeyPass></AndroidSigningKeyPass>
-		<AndroidSigningStorePass></AndroidSigningStorePass>
+		<AndroidSigningKeyPass>199410</AndroidSigningKeyPass>
+		<AndroidSigningStorePass>199410</AndroidSigningStorePass>
 	</PropertyGroup>
 
 

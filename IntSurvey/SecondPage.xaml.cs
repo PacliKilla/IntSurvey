@@ -28,7 +28,7 @@ public partial class SecondPage : ContentPage
     {
         InitializeComponent();
         BindingContext = this;
-        //SecureStorage.Default.RemoveAll();
+        SecureStorage.Default.RemoveAll();
 
         NavigationPage.SetHasNavigationBar(this, false);
 
@@ -41,16 +41,23 @@ public partial class SecondPage : ContentPage
     {
         InitializeHttpClient();
 
-        AppCredentials.Username = username;
-        AppCredentials.Password = password;
-        AppCredentials.Uri = settingUri;
 
         serviceInfo = await LoadFromCache<ServiceInfo>("ServiceInfo");
         prodInfo = await LoadFromCache<ServiceInfo>("prodInfo");
 
+
+        await CheckAndNavigateToHomePage();
+
+    }
+    private async Task CheckAndNavigateToHomePage()
+    {
         string id = await SecureStorage.GetAsync("LicenseID");
         if (!string.IsNullOrEmpty(id))
         {
+            AppCredentials.CacID = id;
+            AppCredentials.Username = username;
+            AppCredentials.Password = password;
+            AppCredentials.Uri = settingUri;
             Navigation.PushAsync(new HomePage());
         }
     }
@@ -300,7 +307,7 @@ public partial class SecondPage : ContentPage
             }
         }
 
-        Navigation.PushAsync(new HomePage());
+        await CheckAndNavigateToHomePage();
     }
 
 

@@ -30,6 +30,7 @@ namespace IntSurvey
         private Dictionary<string, string> selectedAnswersForType3 = new Dictionary<string, string>();
         private Dictionary<string, HashSet<string>> selectedAnswersForType4 = new Dictionary<string, HashSet<string>>();
         private Dictionary<string, string> selectedAnswersForType2 = new Dictionary<string, string>();
+        private Dictionary<string, string> selectedAnswersForType5 = new Dictionary<string, string>();
         private int currentQuestionIndex = 0;
         private QuestionnairePage _page;
         private Dictionary<string, object> selectedAnswers = new Dictionary<string, object>();
@@ -38,6 +39,25 @@ namespace IntSurvey
         private StackLayout lastTenPointScoreStackLayout;
         private StackLayout lastSingleAnswerVariantStackLayout;
         private StackLayout lastMultipleAnswerVariantStackLayout;
+
+
+        protected override void OnDisappearing()
+        {
+            // Unsubscribe from events or perform cleanup actions here
+
+            if (submitButton != null)
+            {
+                submitButton.Clicked -= OnSubmitButtonClicked;
+            }
+
+            multipleAnswers = null;
+            selectedAnswers = null;
+            answerStackLayout = null;
+            stackLayout.Children.Clear();
+            stackLayout.Clear();
+            
+            base.OnDisappearing();
+        }
 
 
 
@@ -86,7 +106,7 @@ namespace IntSurvey
 
             homeButton.Clicked += async (sender, e) =>
             {
-                await Navigation.PopAsync();
+                await Navigation.PushAsync(new HomePage());
             };
 
 
@@ -156,7 +176,7 @@ namespace IntSurvey
                                             if (child is ImageRadioButton radioButton && radioButton.Answer == savedAnswer)
                                             {
                                                 radioButton.SimulateTap();
-                                                break; // No need to continue checking other radio buttons
+                                                break; 
                                             }
                                         }
                                     }
@@ -286,6 +306,7 @@ namespace IntSurvey
 
         public QuestionnairePage(List<Question> questions, int questionnaireOid, int companyOid)
         {
+            questions = questions.OrderBy(q => q.id).ToList();
             this.questions = questions;
             this.questionnaireOid = questionnaireOid;
             this.companyOid = companyOid;
@@ -317,7 +338,7 @@ namespace IntSurvey
 
             homeButton.Clicked += async (sender, e) =>
             {
-                await Navigation.PopAsync();
+                await Navigation.PushAsync(new HomePage());
             };
 
             // Create a Grid layout
@@ -433,12 +454,96 @@ namespace IntSurvey
             {
                 answerView = CreateMultipleAnswerVariantAnswerView(question);
             }
+            else if (question.gradingType == 5) 
+            {
+                answerView = CreateFivePointScoreAnswerView(question);
+            }
 
             return new StackLayout
             {
                 Children = { questionFrame, answerView }
             };
         }
+
+        private View CreateFivePointScoreAnswerView(Question question)
+        {
+            StackLayout answerStackLayout = new StackLayout
+            {
+                Orientation = StackOrientation.Horizontal,
+                Spacing = 10,
+                Padding = new Thickness(30, 10, 0, 150),
+            };
+
+            for (int i = 1; i <= 5; i++)
+            {
+                var answerButton = new Button
+                {
+                    Text = i.ToString(),
+                    FontSize = 32,
+                    TextColor = Color.FromHex("#000000"),
+                    VerticalOptions = LayoutOptions.Center,
+                    BackgroundColor = Color.FromHex("#37AA0F"),
+                };
+
+                
+                answerButton.SetValue(IsSelectedProperty, false);
+
+                answerButton.Clicked += (s, e) =>
+                {
+                    
+                    bool isSelected = !(bool)answerButton.GetValue(IsSelectedProperty);
+                    answerButton.SetValue(IsSelectedProperty, isSelected);
+
+                    if (isSelected)
+                    {
+                        
+                        answerButton.BackgroundColor = Color.FromHex("#296e11");
+                        
+                        selectedAnswersForType5[question.question] = i.ToString();
+                    }
+                    else
+                    {
+                        
+                        answerButton.BackgroundColor = Color.FromHex("#37AA0F");
+                        
+                        selectedAnswersForType5.Remove(question.question);
+                    }
+                };
+
+                double buttonWidthPercentage = 0.13;
+                double buttonWidth = DeviceDisplay.MainDisplayInfo.Width * buttonWidthPercentage;
+
+                answerButton.WidthRequest = buttonWidth;
+
+                answerStackLayout.Children.Add(answerButton);
+            }
+
+            return answerStackLayout;
+        }
+
+        
+        public static readonly BindableProperty IsSelectedProperty =
+            BindableProperty.CreateAttached(
+                "IsSelected",
+                typeof(bool),
+                typeof(Button),
+                false,
+                propertyChanged: OnIsSelectedChanged);
+
+        
+        private static void OnIsSelectedChanged(BindableObject bindable, object oldValue, object newValue)
+        {
+            if (bindable is Button button && newValue is bool isSelected)
+            {
+                
+                button.BackgroundColor = isSelected ? Color.FromHex("#296e11") : Color.FromHex("#37AA0F");
+            }
+        }
+
+
+
+
+
         private StackLayout CreateRadioButtonAnswerView(Question question)
         {
             answerStackLayout = new StackLayout
@@ -872,7 +977,7 @@ namespace IntSurvey
 
                 homeButton.Clicked += async (sender, e) =>
                 {
-                    await Navigation.PopAsync();
+                    await Navigation.PushAsync(new HomePage());
                 };
 
 
@@ -1027,7 +1132,7 @@ namespace IntSurvey
                         await DisplayAlert("Error", "Failed to submit responses", "OK");
                     }
 
-                    await Navigation.PopAsync();
+                    await  Navigation.PushAsync(new HomePage());
                 }
             }
             else
@@ -1036,7 +1141,7 @@ namespace IntSurvey
             }
             if (!unansweredQuestionAlertDisplayed)
             {
-                await Navigation.PopAsync();
+                await Navigation.PushAsync(new HomePage());
             }
         }
         private bool IsInternetConnected()
@@ -1058,7 +1163,7 @@ namespace IntSurvey
             {
                 var json = JsonConvert.SerializeObject(response);
                 await SecureStorage.SetAsync("cached_response", json);
-                await Navigation.PopAsync();
+                await Navigation.PushAsync(new HomePage());
                 CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
                 var successMessage = $"Răspunsul a fost salvat cu succes." + Environment.NewLine + "Mulțumim pentru opinia dumneavoastră.";
                 var toast = Toast.Make(successMessage, duration: ToastDuration.Long);

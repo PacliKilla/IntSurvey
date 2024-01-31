@@ -68,7 +68,7 @@ namespace IntSurvey
         protected override void OnAppearing()
         {
             base.OnAppearing();
-
+            GC.Collect();
             if (IsInternetConnected())
             {
                 LoadCachedResponsesAndSend();

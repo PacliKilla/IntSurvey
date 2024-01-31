@@ -28,7 +28,7 @@ public partial class SecondPage : ContentPage
     {
         InitializeComponent();
         BindingContext = this;
-        SecureStorage.Default.RemoveAll();
+        //SecureStorage.Default.RemoveAll();
 
         NavigationPage.SetHasNavigationBar(this, false);
 
@@ -54,6 +54,20 @@ public partial class SecondPage : ContentPage
         string id = await SecureStorage.GetAsync("LicenseID");
         if (!string.IsNullOrEmpty(id))
         {
+            try
+            {
+                // Show the activity indicator
+                //loadingRow.Height = new GridLength(1, GridUnitType.Star);
+                loadingOverlay.IsVisible = true;
+                await Task.Delay(1000);
+            }
+            finally
+            {
+                // Hide the activity indicator
+
+                loadingOverlay.IsVisible = false;
+                //loadingRow.Height = GridLength.Auto;
+            }
             AppCredentials.CacID = id;
             AppCredentials.Username = username;
             AppCredentials.Password = password;
@@ -65,8 +79,9 @@ public partial class SecondPage : ContentPage
     {
         base.OnAppearing();
 
-        testModeCheckBox.IsChecked = true;
-        testModeCheckBox.IsChecked = !testModeCheckBox.IsChecked;
+        bool testModeChecked = Preferences.Get("TestModeChecked", false);
+
+        testModeCheckBox.IsChecked = testModeChecked;
     }
 
     private void OnFrameTapped(object sender, EventArgs e)
@@ -85,6 +100,7 @@ public partial class SecondPage : ContentPage
         
         if (testModeCheckBox.IsChecked)
         {
+            Preferences.Set("TestModeChecked", true);
             baseURL = $"{serviceInfo.ServiceUri}/Mobile/ActivateDevice?ActivationCode=";
             username = serviceInfo.User;
             password = serviceInfo.Password;
@@ -92,6 +108,7 @@ public partial class SecondPage : ContentPage
         }
         else
         {
+            Preferences.Set("TestModeChecked", false);
             baseURL = $"{prodInfo.ServiceUri}/Mobile/ActivateDevice?ActivationCode=";
             username = prodInfo.User;
             password = prodInfo.Password;

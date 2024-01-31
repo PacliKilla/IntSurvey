@@ -10,24 +10,25 @@
             </Style>
         </ResourceDictionary>
     </ContentPage.Resources>
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <!-- Auto size for the content -->
-            <RowDefinition x:Name="loadingRow" Height="Auto" />
-            <!-- Auto size initially, will be adjusted when the overlay is visible -->
-        </Grid.RowDefinitions>
 
-        <StackLayout x:Name="stackLayout" IsVisible="True">
-            <Label x:Name="titleLabel" FontFamily="Roboto" FontSize="48" HorizontalOptions="Center" VerticalOptions="Start" Margin="0,40,0,30" FontAttributes="Bold" TextColor="Black"/>
+    <ScrollView>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <!-- Auto size for the content -->
+                <RowDefinition x:Name="loadingRow" Height="Auto" />
+                <!-- Auto size initially, will be adjusted when the overlay is visible -->
+            </Grid.RowDefinitions>
 
+            <StackLayout x:Name="stackLayout" IsVisible="True">
+                <Label x:Name="titleLabel" FontFamily="Roboto" FontSize="48" HorizontalOptions="Center" VerticalOptions="Start" Margin="0,40,0,30" FontAttributes="Bold" TextColor="Black"/>
 
+                <!-- Your other content goes here -->
+            </StackLayout>
 
-            <!-- Your other content goes here -->
-        </StackLayout>
-
-        <Frame x:Name="loadingOverlay" IsVisible="False" BackgroundColor="#80000000" Padding="0">
-            <ActivityIndicator IsRunning="True" Color="White" VerticalOptions="Center" HorizontalOptions="Center" />
-        </Frame>
-    </Grid>
+            <Frame x:Name="loadingOverlay" IsVisible="False" BackgroundColor="#80000000" Padding="0">
+                <ActivityIndicator IsRunning="True" Color="White" VerticalOptions="Center" HorizontalOptions="Center" />
+            </Frame>
+        </Grid>
+    </ScrollView>
 </ContentPage>

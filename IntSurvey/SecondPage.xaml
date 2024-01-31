@@ -66,7 +66,10 @@
                 <TapGestureRecognizer Tapped="OnFrameTapped"/>
             </Frame.GestureRecognizers>
         </Frame>
-
+        
+        <Frame x:Name="loadingOverlay" IsVisible="False" BackgroundColor="#80000000" Padding="0" >
+            <ActivityIndicator IsRunning="True" Color="White" VerticalOptions="Center" HorizontalOptions="Center" />
+        </Frame>
 
     </Grid>
 </ContentPage>

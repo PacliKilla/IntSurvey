@@ -39,6 +39,7 @@ namespace IntSurvey
         private StackLayout lastTenPointScoreStackLayout;
         private StackLayout lastSingleAnswerVariantStackLayout;
         private StackLayout lastMultipleAnswerVariantStackLayout;
+        private Button selectedButtonForType5;
 
 
         protected override void OnDisappearing()
@@ -298,6 +299,38 @@ namespace IntSurvey
                             }
                         }
                         break;
+
+                    case 5:
+                        if (selectedAnswer != null && selectedAnswer is string answerForType5)
+                        {
+                            selectedAnswersForType5[questions[currentQuestionIndex].question] = answerForType5;
+
+                            if (answerButtonsForType5 != null)
+                            {
+                                foreach (var button in answerButtonsForType5)
+                                {
+                                    if (button.Text == answerForType5)
+                                    {
+
+                                        // Simulate a button click
+                                        Device.BeginInvokeOnMainThread(() =>
+                                        {
+                                            button.SendClicked();
+                                        });
+                                    }
+                                    else
+                                    {
+                                        button.BackgroundColor = Color.FromHex("#37AA0F");
+                                        button.SetValue(IsSelectedProperty, false);
+                                    }
+                                }
+                            }
+                        }
+                        break;
+
+
+
+
                 }
             }
         }
@@ -465,6 +498,9 @@ namespace IntSurvey
             };
         }
 
+        private List<Button> answerButtonsForType5;
+
+
         private View CreateFivePointScoreAnswerView(Question question)
         {
             StackLayout answerStackLayout = new StackLayout
@@ -473,6 +509,8 @@ namespace IntSurvey
                 Spacing = 10,
                 Padding = new Thickness(30, 10, 0, 150),
             };
+
+            answerButtonsForType5 = new List<Button>(); 
 
             for (int i = 1; i <= 5; i++)
             {
@@ -485,28 +523,34 @@ namespace IntSurvey
                     BackgroundColor = Color.FromHex("#37AA0F"),
                 };
 
-                
                 answerButton.SetValue(IsSelectedProperty, false);
+
+                int localValue = i; 
 
                 answerButton.Clicked += (s, e) =>
                 {
-                    
                     bool isSelected = !(bool)answerButton.GetValue(IsSelectedProperty);
+
+                    
+                    if (selectedButtonForType5 != null && selectedButtonForType5 != answerButton)
+                    {
+                        selectedButtonForType5.SetValue(IsSelectedProperty, false);
+                        selectedButtonForType5.BackgroundColor = Color.FromHex("#37AA0F");
+                    }
+
                     answerButton.SetValue(IsSelectedProperty, isSelected);
 
                     if (isSelected)
                     {
-                        
                         answerButton.BackgroundColor = Color.FromHex("#296e11");
-                        
-                        selectedAnswersForType5[question.question] = i.ToString();
+                        selectedAnswersForType5[question.question] = localValue.ToString();
+                        selectedButtonForType5 = answerButton; 
                     }
                     else
                     {
-                        
                         answerButton.BackgroundColor = Color.FromHex("#37AA0F");
-                        
                         selectedAnswersForType5.Remove(question.question);
+                        selectedButtonForType5 = null; 
                     }
                 };
 
@@ -515,13 +559,15 @@ namespace IntSurvey
 
                 answerButton.WidthRequest = buttonWidth;
 
+                answerButtonsForType5.Add(answerButton); 
+
                 answerStackLayout.Children.Add(answerButton);
             }
 
             return answerStackLayout;
         }
 
-        
+
         public static readonly BindableProperty IsSelectedProperty =
             BindableProperty.CreateAttached(
                 "IsSelected",
@@ -1061,6 +1107,9 @@ namespace IntSurvey
                     case 4:
                         answerToSave = selectedAnswersForType4.ContainsKey(currentQuestion.question) ? selectedAnswersForType4[currentQuestion.question] : null;
                         break;
+                    case 5: 
+                        answerToSave = selectedAnswersForType5.ContainsKey(currentQuestion.question) ? selectedAnswersForType5[currentQuestion.question] : null;
+                        break;
                 }
 
                 if (answerToSave != null)
@@ -1118,14 +1167,14 @@ namespace IntSurvey
                         // {
                        // await writer.WriteAsync(json);
                         //}
-                        CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
-                        var successMessage = $"Răspunsul a fost trimis cu succes." + Environment.NewLine + "Mulțumim pentru opinia dumneavoastră.";
-                        //var successMessage = $"Responses submitted successfully.\n\nRequest content:\n{json}\n\nResponse content:\n{jsonResponse}";
-                        //await DisplayAlert("Success", successMessage, "OK");
+                        //CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+                        //var successMessage = $"Răspunsul a fost trimis cu succes." + Environment.NewLine + "Mulțumim pentru opinia dumneavoastră.";
+                        var successMessage = $"Responses submitted successfully.\n\nRequest content:\n{json}\n\nResponse content:\n{jsonResponse}";
+                        await DisplayAlert("Success", successMessage, "OK");
 
                         var toast = Toast.Make(successMessage, duration: ToastDuration.Long);
 
-                        await toast.Show(cancellationTokenSource.Token);
+                        //await toast.Show(cancellationTokenSource.Token);
                     }
                     else
                     {
@@ -1254,6 +1303,21 @@ namespace IntSurvey
                         }
                         break;
 
+                    case 5: // Grading type 5
+                        if (IsGradingType5Answered(question.question))
+                        {
+                            var selectedAnswer = selectedAnswersForType5[question.question];
+
+                            responses.Add(new Response
+                            {
+                                id = 0,
+                                questionId = questionId,
+                                alternativeResponse = selectedAnswer.ToString(),
+                                comentary = string.Empty
+                            });
+                        }
+                        break;
+
                     default:
                         
                         break;
@@ -1286,6 +1350,11 @@ namespace IntSurvey
         private bool IsMultipleAnswerVariantAnswered(string questionKey)
         {
             return selectedAnswersForType4.ContainsKey(questionKey) && selectedAnswersForType4[questionKey].Count > 0;
+        }
+
+        private bool IsGradingType5Answered(string questionKey)
+        {
+            return selectedAnswersForType5.ContainsKey(questionKey);
         }
 
 
@@ -1386,6 +1455,10 @@ namespace IntSurvey
 
                 case 4:
                     return IsMultipleAnswerVariantAnswered(currentQuestion.question);
+
+                case 5: 
+                    return IsGradingType5Answered(currentQuestion.question);
+
 
                 default:
                     return false;

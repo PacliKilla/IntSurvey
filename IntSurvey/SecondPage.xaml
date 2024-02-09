@@ -20,39 +20,39 @@
             <StackLayout Orientation="Horizontal" HorizontalOptions="Center" Spacing="10">
                 <Frame BorderColor="#000000" CornerRadius="5" Padding="1">
                     <Entry x:Name="entry1" MaxLength="1" BackgroundColor="Transparent" TextColor="#000000" HorizontalOptions="Center"
-            TextChanged="OnEntryTextChanged" Keyboard="Numeric" VerticalOptions="Center" Margin="17,0,-8,0" FontSize = "30"/>
+            TextChanged="OnEntryTextChanged" Keyboard="Numeric" VerticalOptions="Center" Margin="17,0,-8,0" FontSize = "30" Focused="OnEntryFocused"/>
                 </Frame>
                 <Frame BorderColor="#000000" CornerRadius="5" Padding="1">
                     <Entry x:Name="entry2" MaxLength="1" BackgroundColor="Transparent" TextColor="#000000" HorizontalOptions="Center"
-            TextChanged="OnEntryTextChanged" Keyboard="Numeric" VerticalOptions="Center" Margin="17,0,-8,0" FontSize = "30"/>
+            TextChanged="OnEntryTextChanged" Keyboard="Numeric" VerticalOptions="Center" Margin="17,0,-8,0" FontSize = "30" Focused="OnEntryFocused"/>
                 </Frame>
                 <Frame BorderColor="#000000" CornerRadius="5" Padding="1">
                     <Entry x:Name="entry3" MaxLength="1" BackgroundColor="Transparent" TextColor="#000000" HorizontalOptions="Center"
-            TextChanged="OnEntryTextChanged" Keyboard="Numeric" VerticalOptions="Center" Margin="17,0,-8,0" FontSize = "30"/>
+            TextChanged="OnEntryTextChanged" Keyboard="Numeric" VerticalOptions="Center" Margin="17,0,-8,0" FontSize = "30" Focused="OnEntryFocused"/>
                 </Frame>
                 <Frame BorderColor="#000000" CornerRadius="5" Padding="1">
                     <Entry x:Name="entry4" MaxLength="1" BackgroundColor="Transparent" TextColor="#000000" HorizontalOptions="Center"
-            TextChanged="OnEntryTextChanged" Keyboard="Numeric" VerticalOptions="Center" Margin="17,0,-8,0" FontSize = "30"/>
+            TextChanged="OnEntryTextChanged" Keyboard="Numeric" VerticalOptions="Center" Margin="17,0,-8,0" FontSize = "30" Focused="OnEntryFocused"/>
                 </Frame>
                 <Frame BorderColor="#000000" CornerRadius="5" Padding="1">
                     <Entry x:Name="entry5" MaxLength="1" BackgroundColor="Transparent" TextColor="#000000" HorizontalOptions="Center"
-            TextChanged="OnEntryTextChanged" Keyboard="Numeric" VerticalOptions="Center" Margin="17,0,-8,0" FontSize = "30"/>
+            TextChanged="OnEntryTextChanged" Keyboard="Numeric" VerticalOptions="Center" Margin="17,0,-8,0" FontSize = "30" Focused="OnEntryFocused"/>
                 </Frame>
                 <Frame BorderColor="#000000" CornerRadius="5" Padding="1">
                     <Entry x:Name="entry6" MaxLength="1" BackgroundColor="Transparent" TextColor="#000000" HorizontalOptions="Center"
-            TextChanged="OnEntryTextChanged" Keyboard="Numeric" VerticalOptions="Center" Margin="17,0,-8,0" FontSize = "30"/>
+            TextChanged="OnEntryTextChanged" Keyboard="Numeric" VerticalOptions="Center" Margin="17,0,-8,0" FontSize = "30" Focused="OnEntryFocused"/>
                 </Frame>
                 <Frame BorderColor="#000000" CornerRadius="5" Padding="1">
                     <Entry x:Name="entry7" MaxLength="1" BackgroundColor="Transparent" TextColor="#000000" HorizontalOptions="Center"
-            TextChanged="OnEntryTextChanged" Keyboard="Numeric" VerticalOptions="Center" Margin="17,0,-8,0" FontSize = "30"/>
+            TextChanged="OnEntryTextChanged" Keyboard="Numeric" VerticalOptions="Center" Margin="17,0,-8,0" FontSize = "30" Focused="OnEntryFocused"/>
                 </Frame>
                 <Frame BorderColor="#000000" CornerRadius="5" Padding="1">
                     <Entry x:Name="entry8" MaxLength="1" BackgroundColor="Transparent" TextColor="#000000" HorizontalOptions="Center"
-            TextChanged="OnEntryTextChanged" Keyboard="Numeric" VerticalOptions="Center" Margin="17,0,-8,0" FontSize = "30"/>
+            TextChanged="OnEntryTextChanged" Keyboard="Numeric" VerticalOptions="Center" Margin="17,0,-8,0" FontSize = "30" Focused="OnEntryFocused"/>
                 </Frame>
                 <Frame BorderColor="#000000" CornerRadius="5" Padding="1">
                     <Entry x:Name="entry9" MaxLength="1" BackgroundColor="Transparent" TextColor="#000000" HorizontalOptions="Center"
-            TextChanged="OnEntryTextChanged" Keyboard="Numeric" VerticalOptions="Center" Margin="17,0,-8,0" FontSize = "30"/>
+            TextChanged="OnEntryTextChanged" Keyboard="Numeric" VerticalOptions="Center" Margin="17,0,-8,0" FontSize = "30" Focused="OnEntryFocused"/>
                 </Frame>
             </StackLayout>
         </VerticalStackLayout>

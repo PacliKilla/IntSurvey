@@ -130,6 +130,8 @@
 		<PackageReference Include="Microsoft.Maui.Graphics.Skia" Version="7.0.96" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 		<PackageReference Include="Plugin.Toast" Version="2.2.0" />
+		<PackageReference Include="SharpHook" Version="5.2.3" />
+		<PackageReference Include="SharpHook.Reactive" Version="5.2.3" />
 		<PackageReference Include="SkiaSharp.Extended.UI.Maui" Version="2.0.0-preview.86" />
 		<PackageReference Include="Xam.Plugin.Connectivity" Version="3.2.0" />
 		<PackageReference Include="Xamarin.Essentials" Version="1.8.0" />

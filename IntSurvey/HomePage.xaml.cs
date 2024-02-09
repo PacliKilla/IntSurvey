@@ -24,7 +24,6 @@ namespace IntSurvey
         public string baseLink = $"{AppCredentials.Uri}/Mobile/GetQuestionnairesNEW?LicenseID=";
         public string baseOidLink = $"{AppCredentials.Uri}/Mobile/GetQuestionnaireNEW?LicenseId=";
 
-
         public string licenseIDLink => $"{baseLink}{cachedID}";
         public string OidLink => $"{baseOidLink}{cachedID}";
         string username = AppCredentials.Username;
@@ -32,13 +31,19 @@ namespace IntSurvey
         Root questionnaires;
         public string QuestionnaireName { get; set; }
 
+        const string SelectedLanguageKey = "SelectedLanguage";
+
+        string selectedLanguage = "RO";
+
+        bool isFirstFocusHandled = false;
+
         public HomePage()
         {
             InitializeComponent();
             NavigationPage.SetHasNavigationBar(this, false);
 
 
-
+            
 
             BindingContext = this;
 
@@ -46,7 +51,34 @@ namespace IntSurvey
 
             titleLabel.Text = QuestionnaireName;
 
+            languagePicker.Items.Add("EN");
+            languagePicker.Items.Add("RO");
+            languagePicker.Items.Add("RU");
 
+
+
+            
+            if (Preferences.ContainsKey(SelectedLanguageKey))
+            {
+                selectedLanguage = Preferences.Get(SelectedLanguageKey, "RO");
+                languagePicker.SelectedIndex = languagePicker.Items.IndexOf(selectedLanguage);
+            }
+            else
+            {
+                
+                selectedLanguage = "RO";
+                languagePicker.SelectedIndex = languagePicker.Items.IndexOf(selectedLanguage);
+                Preferences.Set(SelectedLanguageKey, selectedLanguage);
+            }
+
+            languagePicker.SelectedIndexChanged += LanguagePicker_SelectedIndexChanged;
+
+            if (isFirstFocusHandled && languagePicker.IsFocused)
+            {
+                languagePicker.Unfocus();
+            }
+
+            isFirstFocusHandled = true;
 
 
 
@@ -63,16 +95,55 @@ namespace IntSurvey
 
         }
 
+        private void LanguagePicker_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            
+            selectedLanguage = languagePicker.SelectedItem?.ToString();
+
+            switch (selectedLanguage)
+            {
+                case "EN":
+
+                    titleLabel.Text = "Questionnaires";
+                    break;
+                case "RO":
+
+                    titleLabel.Text = "Chestionare";
+                    break;
+                case "RU":
+
+                    titleLabel.Text = "Анкеты";
+                    break;
+                default:
+
+                    titleLabel.Text = "Questionnaires";
+                    break;
+            }
+            Preferences.Set(SelectedLanguageKey, selectedLanguage);
+        }
+
 
 
         protected override void OnAppearing()
         {
+            languagePicker.Unfocus();
             base.OnAppearing();
             GC.Collect();
             if (IsInternetConnected())
             {
                 LoadCachedResponsesAndSend();
             }
+        }
+
+
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+            if (isFirstFocusHandled && languagePicker.IsFocused)
+            {
+                languagePicker.Unfocus();
+            }
+            languagePicker.Unfocus();
         }
 
         private bool IsInternetConnected()
@@ -312,12 +383,12 @@ namespace IntSurvey
 
                 // Load the new page
                 List<Question> selectedQuestions = questionnaireQuestions[selectedOid];
-                await Navigation.PushAsync(new QuestionnairePage(selectedQuestions, selectedOid, companyOid));
+                await Navigation.PushAsync(new QuestionnairePage(selectedQuestions, selectedOid, companyOid, selectedLanguage));
             }
             finally
             {
                 // Hide the activity indicator
-               
+                languagePicker.Unfocus();
                 loadingOverlay.IsVisible = false;
                 loadingRow.Height = GridLength.Auto;
             }

@@ -6,6 +6,9 @@ using Newtonsoft.Json;
 using System.Net.Http.Headers;
 using System.Text;
 using IntSurvey.QuestionModels;
+using SharpHook;
+using SharpHook.Native;
+using SharpHook.Reactive;
 
 namespace IntSurvey;
 using System.Security.Cryptography;
@@ -34,7 +37,7 @@ public partial class SecondPage : ContentPage
 
         testModeCheckBox.CheckedChanged += TestModeCheckBox_CheckedChanged;
 
-        InitializeAsync(); // Call the asynchronous initialization method
+        InitializeAsync(); 
     }
 
     private async void InitializeAsync()
@@ -45,7 +48,22 @@ public partial class SecondPage : ContentPage
         serviceInfo = await LoadFromCache<ServiceInfo>("ServiceInfo");
         prodInfo = await LoadFromCache<ServiceInfo>("prodInfo");
 
-
+        if (testModeCheckBox.IsChecked)
+        {
+            Preferences.Set("TestModeChecked", true);
+            baseURL = $"{serviceInfo.ServiceUri}/Mobile/ActivateDevice?ActivationCode=";
+            username = serviceInfo.User;
+            password = serviceInfo.Password;
+            settingUri = serviceInfo.ServiceUri;
+        }
+        else
+        {
+            Preferences.Set("TestModeChecked", false);
+            baseURL = $"{prodInfo.ServiceUri}/Mobile/ActivateDevice?ActivationCode=";
+            username = prodInfo.User;
+            password = prodInfo.Password;
+            settingUri = prodInfo.ServiceUri;
+        }
         await CheckAndNavigateToHomePage();
 
     }
@@ -56,17 +74,15 @@ public partial class SecondPage : ContentPage
         {
             try
             {
-                // Show the activity indicator
-                //loadingRow.Height = new GridLength(1, GridUnitType.Star);
+
                 loadingOverlay.IsVisible = true;
                 await Task.Delay(1000);
             }
             finally
             {
-                // Hide the activity indicator
 
                 loadingOverlay.IsVisible = false;
-                //loadingRow.Height = GridLength.Auto;
+
             }
             AppCredentials.CacID = id;
             AppCredentials.Username = username;
@@ -292,7 +308,22 @@ public partial class SecondPage : ContentPage
         string enteredText = entry1.Text + entry2.Text + entry3.Text + entry4.Text + entry5.Text + entry6.Text + entry7.Text + entry8.Text + entry9.Text;
 
         MyKey = enteredText;
-        
+        if (testModeCheckBox.IsChecked)
+        {
+            Preferences.Set("TestModeChecked", true);
+            baseURL = $"{serviceInfo.ServiceUri}/Mobile/ActivateDevice?ActivationCode=";
+            username = serviceInfo.User;
+            password = serviceInfo.Password;
+            settingUri = serviceInfo.ServiceUri;
+        }
+        else
+        {
+            Preferences.Set("TestModeChecked", false);
+            baseURL = $"{prodInfo.ServiceUri}/Mobile/ActivateDevice?ActivationCode=";
+            username = prodInfo.User;
+            password = prodInfo.Password;
+            settingUri = prodInfo.ServiceUri;
+        }
 
         using (HttpClient client = new HttpClient())
         {
@@ -330,7 +361,7 @@ public partial class SecondPage : ContentPage
 
 
 
-
+    //
 
 
     private void OnEntryTextChanged(object sender, TextChangedEventArgs e)
@@ -348,65 +379,15 @@ public partial class SecondPage : ContentPage
         if (!string.IsNullOrEmpty(e.NewTextValue) && e.NewTextValue.Length == 1)
         {
             // Move focus to the next Entry when a digit is entered
-            switch (entry)
-            {
-                case var _ when entry == entry1:
-                    entry2.Focus();
-                    break;
-                case var _ when entry == entry2:
-                    entry3.Focus();
-                    break;
-                case var _ when entry == entry3:
-                    entry4.Focus();
-                    break;
-                case var _ when entry == entry4:
-                    entry5.Focus();
-                    break;
-                case var _ when entry == entry5:
-                    entry6.Focus();
-                    break;
-                case var _ when entry == entry6:
-                    entry7.Focus();
-                    break;
-                case var _ when entry == entry7:
-                    entry8.Focus();
-                    break;
-                case var _ when entry == entry8:
-                    entry9.Focus();
-                    break;
-            }
+            MoveFocusToNextEntry(entry);
         }
-        else if (string.IsNullOrEmpty(e.NewTextValue))
+        else if (string.IsNullOrEmpty(e.NewTextValue) && !string.IsNullOrEmpty(e.OldTextValue))
         {
-            // Move focus to the previous Entry when deleting a digit
-            switch (entry)
-            {
-                case var _ when entry == entry9:
-                    entry8.Focus();
-                    break;
-                case var _ when entry == entry8:
-                    entry7.Focus();
-                    break;
-                case var _ when entry == entry7:
-                    entry6.Focus();
-                    break;
-                case var _ when entry == entry6:
-                    entry5.Focus();
-                    break;
-                case var _ when entry == entry5:
-                    entry4.Focus();
-                    break;
-                case var _ when entry == entry4:
-                    entry3.Focus();
-                    break;
-                case var _ when entry == entry3:
-                    entry2.Focus();
-                    break;
-                case var _ when entry == entry2:
-                    entry1.Focus();
-                    break;
-            }
+            // User deleted content, move focus to the previous Entry
+            MoveFocusToPreviousEntry(entry);
         }
+
+        // Check if all Entries are filled
         if (!string.IsNullOrEmpty(entry1.Text) &&
             !string.IsNullOrEmpty(entry2.Text) &&
             !string.IsNullOrEmpty(entry3.Text) &&
@@ -417,10 +398,93 @@ public partial class SecondPage : ContentPage
             !string.IsNullOrEmpty(entry8.Text) &&
             !string.IsNullOrEmpty(entry9.Text))
         {
-            
             btnGoBackToHomePage_Clicked(sender, e);
         }
     }
+
+    private void OnEntryFocused(object sender, FocusEventArgs e)
+    {
+        var entry = (Entry)sender;
+
+        entry.TextChanged += (s, args) =>
+        {
+            if (args.OldTextValue != null && args.NewTextValue != null && args.NewTextValue.Length < args.OldTextValue.Length)
+            {
+                // If text length decreased, indicating backspace was pressed, and entry is empty, move focus to the previous Entry
+                if (string.IsNullOrEmpty(entry.Text))
+                {
+                    MoveFocusToPreviousEntry(entry);
+                }
+            }
+        };
+    }
+
+
+
+    private void MoveFocusToNextEntry(Entry currentEntry)
+    {
+        switch (currentEntry)
+        {
+            case var _ when currentEntry == entry1:
+                entry2.Focus();
+                break;
+            case var _ when currentEntry == entry2:
+                entry3.Focus();
+                break;
+            case var _ when currentEntry == entry3:
+                entry4.Focus();
+                break;
+            case var _ when currentEntry == entry4:
+                entry5.Focus();
+                break;
+            case var _ when currentEntry == entry5:
+                entry6.Focus();
+                break;
+            case var _ when currentEntry == entry6:
+                entry7.Focus();
+                break;
+            case var _ when currentEntry == entry7:
+                entry8.Focus();
+                break;
+            case var _ when currentEntry == entry8:
+                entry9.Focus();
+                break;
+        }
+    }
+
+    private void MoveFocusToPreviousEntry(Entry currentEntry)
+    {
+        switch (currentEntry)
+        {
+            case var _ when currentEntry == entry2:
+                entry1.Focus();
+                break;
+            case var _ when currentEntry == entry3:
+                entry2.Focus();
+                break;
+            case var _ when currentEntry == entry4:
+                entry3.Focus();
+                break;
+            case var _ when currentEntry == entry5:
+                entry4.Focus();
+                break;
+            case var _ when currentEntry == entry6:
+                entry5.Focus();
+                break;
+            case var _ when currentEntry == entry7:
+                entry6.Focus();
+                break;
+            case var _ when currentEntry == entry8:
+                entry7.Focus();
+                break;
+            case var _ when currentEntry == entry9:
+                entry8.Focus();
+                break;
+        }
+    }
+
+
+
 
 
 }

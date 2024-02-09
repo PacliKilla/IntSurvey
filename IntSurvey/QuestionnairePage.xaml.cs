@@ -40,7 +40,9 @@ namespace IntSurvey
         private StackLayout lastSingleAnswerVariantStackLayout;
         private StackLayout lastMultipleAnswerVariantStackLayout;
         private Button selectedButtonForType5;
-
+        private string selectedLanguage = "RO";
+        string username = AppCredentials.Username;
+        string password = AppCredentials.Password;
 
         protected override void OnDisappearing()
         {
@@ -73,8 +75,11 @@ namespace IntSurvey
             }
             else
             {
-
-                return base.OnBackButtonPressed();
+                Device.BeginInvokeOnMainThread(async () =>
+                {
+                    await Navigation.PushAsync(new HomePage());
+                });
+                return true;
             }
         }
         private void UpdateQuestionView()
@@ -337,12 +342,13 @@ namespace IntSurvey
 
 
 
-        public QuestionnairePage(List<Question> questions, int questionnaireOid, int companyOid)
+        public QuestionnairePage(List<Question> questions, int questionnaireOid, int companyOid, string selectedLanguage)
         {
             questions = questions.OrderBy(q => q.id).ToList();
             this.questions = questions;
             this.questionnaireOid = questionnaireOid;
             this.companyOid = companyOid;
+            this.selectedLanguage = selectedLanguage;
             _page = this;
 
             InitializeComponent();
@@ -437,8 +443,53 @@ namespace IntSurvey
             OnBackButtonPressed();
         }
 
+
+
         private View CreateQuestionView(Question question)
         {
+            string questionText = "";
+            string commentaryText = "";
+
+            try
+            {
+                if (selectedLanguage == null)
+                {
+                    selectedLanguage = "RO";
+                }
+
+                var questionJson = question.question;
+                var commentaryJson = question.comentary;
+
+                var questionObj = JsonConvert.DeserializeObject<Dictionary<string, string>>(questionJson);
+                var commentaryObj = JsonConvert.DeserializeObject<Dictionary<string, string>>(commentaryJson);
+
+                if (questionObj != null && questionObj.ContainsKey(selectedLanguage))
+                {
+                    questionText = questionObj[selectedLanguage];
+                }
+
+                if (commentaryObj != null && commentaryObj.ContainsKey(selectedLanguage))
+                {
+                    commentaryText = commentaryObj[selectedLanguage];
+                }
+
+                
+                if (string.IsNullOrEmpty(questionText))
+                {
+                    questionText = "";
+                }
+
+                if (string.IsNullOrEmpty(commentaryText))
+                {
+                    commentaryText = "";
+                }
+            }
+            catch (JsonReaderException)
+            {
+
+                Console.WriteLine("Json parser error");
+            }
+
             Frame questionFrame = new Frame
             {
                 BackgroundColor = Color.FromRgba(255, 255, 240, 0),
@@ -451,19 +502,19 @@ namespace IntSurvey
                 FormattedText = new FormattedString
                 {
                     Spans =
-        {
-            new Span { Text = question.question, FontAttributes = FontAttributes.Bold, FontSize = 48, FontFamily = "Roboto" },
-            new Span { Text = Environment.NewLine },
-        }
+            {
+                new Span { Text = questionText, FontAttributes = FontAttributes.Bold, FontSize = 48, FontFamily = "Roboto" },
+                new Span { Text = Environment.NewLine },
+            }
                 },
                 TextColor = Color.FromHex("#000000"),
                 FontSize = 16
             };
 
-            if (question.comentary.Length >= 3)
+            if (!string.IsNullOrEmpty(commentaryText))
             {
                 questionLabel.FormattedText.Spans.Add(new Span { Text = Environment.NewLine });
-                questionLabel.FormattedText.Spans.Add(new Span { Text = "(" + question.comentary + ")", FontSize = 32, FontFamily = "Roboto" });
+                questionLabel.FormattedText.Spans.Add(new Span { Text = "(" + commentaryText + ")", FontSize = 32, FontFamily = "Roboto" });
             }
 
 
@@ -499,6 +550,7 @@ namespace IntSurvey
         }
 
         private List<Button> answerButtonsForType5;
+
 
 
         private View CreateFivePointScoreAnswerView(Question question)
@@ -554,7 +606,7 @@ namespace IntSurvey
                     }
                 };
 
-                double buttonWidthPercentage = 0.13;
+                double buttonWidthPercentage = 0.185;
                 double buttonWidth = DeviceDisplay.MainDisplayInfo.Width * buttonWidthPercentage;
 
                 answerButton.WidthRequest = buttonWidth;
@@ -739,6 +791,7 @@ namespace IntSurvey
 
         private StackLayout CreateSingleAnswerVariantAnswerView(Question question)
         {
+
             StackLayout answerStackLayout = new StackLayout
             {
                 Orientation = StackOrientation.Vertical,
@@ -759,6 +812,10 @@ namespace IntSurvey
 
             foreach (var answerVariant in question.responseVariants)
             {
+                var responseObj = JsonConvert.DeserializeObject<Dictionary<string, string>>(answerVariant.response);
+
+                string responseText = responseObj[selectedLanguage];
+
                 var answerCheckBox = new RadioButton
                 {
                     BackgroundColor = Color.FromRgba(0, 0, 0, 0),
@@ -768,7 +825,7 @@ namespace IntSurvey
 
                 var answerLabel = new Label
                 {
-                    Text = answerVariant.response,
+                    Text = responseText,
                     FontSize = 32,
                     TextColor = Color.FromHex("#000000"),
                     VerticalOptions = LayoutOptions.Start,
@@ -879,6 +936,12 @@ namespace IntSurvey
 
             foreach (var answerVariant in question.responseVariants)
             {
+                
+                var responseObj = JsonConvert.DeserializeObject<Dictionary<string, string>>(answerVariant.response);
+
+                
+                string responseText = responseObj[selectedLanguage];
+
                 var answerCheckBox = new CheckBox
                 {
                     Color = Color.FromHex("#37AA0F"),
@@ -888,7 +951,7 @@ namespace IntSurvey
 
                 var answerLabel = new Label
                 {
-                    Text = answerVariant.response,
+                    Text = responseText,
                     FontSize = 32,
                     TextColor = Color.FromHex("#000000"),
                     VerticalOptions = LayoutOptions.Center,
@@ -1151,10 +1214,12 @@ namespace IntSurvey
             {
                 using (HttpClient client = new HttpClient())
                 {
-                    var credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes("uSr_nps:V8-}W31S!l'D"));
+                    var credentials = Convert.ToBase64String(System.Text.Encoding.ASCII.GetBytes($"{username}:{password}"));
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
                     var content = new StringContent(json, Encoding.UTF8, "application/json");
-                    var responseMessage = await client.PostAsync("https://dev.edi.md/ISNPSAPI/Mobile/InsertResponsesNEW", content);
+                    var responseMessage = await client.PostAsync($"{AppCredentials.Uri}/Mobile/InsertResponsesNEW", content);
+
+                    //https://survey.eservicii.md/ISNPSAPI/Mobile/InsertResponsesNEW
 
                     if (responseMessage.IsSuccessStatusCode)
                     {
@@ -1164,17 +1229,17 @@ namespace IntSurvey
                         //string filePath = Path.Combine(FileSystem.AppDataDirectory, fileName);
 
                         //using (var writer = File.CreateText(filePath))
-                        // {
-                       // await writer.WriteAsync(json);
+                        //{
+                        //    await writer.WriteAsync(json);
                         //}
-                        //CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
-                        //var successMessage = $"Răspunsul a fost trimis cu succes." + Environment.NewLine + "Mulțumim pentru opinia dumneavoastră.";
-                        var successMessage = $"Responses submitted successfully.\n\nRequest content:\n{json}\n\nResponse content:\n{jsonResponse}";
-                        await DisplayAlert("Success", successMessage, "OK");
+                        CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+                        var successMessage = $"Răspunsul a fost trimis cu succes." + Environment.NewLine + "Mulțumim pentru opinia dumneavoastră.";
+                        //var successMessage = $"Responses submitted successfully.\n\nRequest content:\n{json}\n\nResponse content:\n{jsonResponse}";
+                        //await DisplayAlert("Success", successMessage, "OK");
 
                         var toast = Toast.Make(successMessage, duration: ToastDuration.Long);
 
-                        //await toast.Show(cancellationTokenSource.Token);
+                        await toast.Show(cancellationTokenSource.Token);
                     }
                     else
                     {

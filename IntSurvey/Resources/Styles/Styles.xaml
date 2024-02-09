@@ -191,7 +191,7 @@
     <Style TargetType="Picker">
         <Setter Property="TextColor" Value="#000000" />
         <Setter Property="TitleColor" Value="{AppThemeBinding Light={StaticResource Gray900}, Dark={StaticResource Gray200}}" />
-        <Setter Property="BackgroundColor" Value="#88a3b8" />
+        <Setter Property="BackgroundColor" Value="#FFFFFF" />
         <Setter Property="FontFamily" Value="OpenSansRegular"/>
         <Setter Property="FontSize" Value="14"/>
         <Setter Property="MinimumHeightRequest" Value="44"/>

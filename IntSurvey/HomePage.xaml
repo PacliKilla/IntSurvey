@@ -21,7 +21,36 @@
             </Grid.RowDefinitions>
 
             <StackLayout x:Name="stackLayout" IsVisible="True">
-                <Label x:Name="titleLabel" FontFamily="Roboto" FontSize="48" HorizontalOptions="Center" VerticalOptions="Start" Margin="0,40,0,30" FontAttributes="Bold" TextColor="Black"/>
+                <Grid HorizontalOptions="FillAndExpand">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Language selection dropdown -->
+                    <Picker x:Name="languagePicker"
+                            
+                            Title="Select Language"
+                            VerticalOptions="Start"
+                            HorizontalOptions="End"
+                            Margin="0,10,25,20"
+                            SelectedIndexChanged="LanguagePicker_SelectedIndexChanged">
+                        <!-- Add language options here -->
+                        <Picker.Items>
+
+                        </Picker.Items>
+                    </Picker>
+
+                    <Label x:Name="titleLabel"
+                           FontFamily="Roboto"
+                           FontSize="48"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Start"
+                           Margin="0,40,0,30"
+                           FontAttributes="Bold"
+                           TextColor="Black"
+                           Grid.Column="0"/>
+                </Grid>
 
                 <!-- Your other content goes here -->
             </StackLayout>

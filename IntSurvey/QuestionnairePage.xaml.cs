@@ -316,22 +316,20 @@ namespace IntSurvey
                                 {
                                     if (button.Text == answerForType5)
                                     {
-
-                                        // Simulate a button click
-                                        Device.BeginInvokeOnMainThread(() =>
-                                        {
-                                            button.SendClicked();
-                                        });
+                                        // Mark the button as selected
+                                        button.Scale = 1.2;
                                     }
                                     else
                                     {
-                                        button.BackgroundColor = Color.FromHex("#37AA0F");
-                                        button.SetValue(IsSelectedProperty, false);
+                                        // Reset the appearance of other buttons
+                                        button.Scale = 1;
                                     }
                                 }
                             }
                         }
                         break;
+
+
 
 
 
@@ -562,48 +560,32 @@ namespace IntSurvey
                 Padding = new Thickness(30, 10, 0, 150),
             };
 
-            answerButtonsForType5 = new List<Button>(); 
+            List<ImageButton> answerButtonsForType5 = new List<ImageButton>();
 
             for (int i = 1; i <= 5; i++)
             {
-                var answerButton = new Button
+                var answerButton = new ImageButton
                 {
-                    Text = i.ToString(),
-                    FontSize = 32,
-                    TextColor = Color.FromHex("#000000"),
+                    Source = $"Assets/vector{i}.png",
                     VerticalOptions = LayoutOptions.Center,
-                    BackgroundColor = Color.FromHex("#37AA0F"),
+                    BackgroundColor = Color.FromRgba(0, 0, 0, 0),
+                    WidthRequest = 157,
+                    HeightRequest = 157,
                 };
 
-                answerButton.SetValue(IsSelectedProperty, false);
-
-                int localValue = i; 
+                int localValue = i;
 
                 answerButton.Clicked += (s, e) =>
                 {
-                    bool isSelected = !(bool)answerButton.GetValue(IsSelectedProperty);
+                    foreach (var button in answerButtonsForType5)
+                    {
+                        button.Scale = 1; 
+                    }
 
                     
-                    if (selectedButtonForType5 != null && selectedButtonForType5 != answerButton)
-                    {
-                        selectedButtonForType5.SetValue(IsSelectedProperty, false);
-                        selectedButtonForType5.BackgroundColor = Color.FromHex("#37AA0F");
-                    }
+                    answerButton.Scale = 1.2;
 
-                    answerButton.SetValue(IsSelectedProperty, isSelected);
-
-                    if (isSelected)
-                    {
-                        answerButton.BackgroundColor = Color.FromHex("#296e11");
-                        selectedAnswersForType5[question.question] = localValue.ToString();
-                        selectedButtonForType5 = answerButton; 
-                    }
-                    else
-                    {
-                        answerButton.BackgroundColor = Color.FromHex("#37AA0F");
-                        selectedAnswersForType5.Remove(question.question);
-                        selectedButtonForType5 = null; 
-                    }
+                    selectedAnswersForType5[question.question] = localValue.ToString();
                 };
 
                 double buttonWidthPercentage = 0.185;
@@ -611,13 +593,30 @@ namespace IntSurvey
 
                 answerButton.WidthRequest = buttonWidth;
 
-                answerButtonsForType5.Add(answerButton); 
+                answerButtonsForType5.Add(answerButton);
 
                 answerStackLayout.Children.Add(answerButton);
             }
 
+            
+            if (selectedAnswersForType5.TryGetValue(question.question, out string selectedAnswer))
+            {
+                int selectedValue;
+                if (int.TryParse(selectedAnswer, out selectedValue) && selectedValue >= 1 && selectedValue <= 5)
+                {
+                    ImageButton selectedButton = answerButtonsForType5[selectedValue - 1];
+                    selectedButton.Scale = 1.2;
+                }
+            }
+
             return answerStackLayout;
         }
+
+
+
+
+
+
 
 
         public static readonly BindableProperty IsSelectedProperty =

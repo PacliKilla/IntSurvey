@@ -361,14 +361,14 @@ public partial class SecondPage : ContentPage
 
 
 
-    //
+    
 
 
     private void OnEntryTextChanged(object sender, TextChangedEventArgs e)
     {
         var entry = (Entry)sender;
 
-        // Remove non-numeric characters
+        
         var numericText = new string(e.NewTextValue.Where(char.IsDigit).ToArray());
 
         if (e.NewTextValue != numericText)
@@ -378,16 +378,16 @@ public partial class SecondPage : ContentPage
 
         if (!string.IsNullOrEmpty(e.NewTextValue) && e.NewTextValue.Length == 1)
         {
-            // Move focus to the next Entry when a digit is entered
+            
             MoveFocusToNextEntry(entry);
         }
         else if (string.IsNullOrEmpty(e.NewTextValue) && !string.IsNullOrEmpty(e.OldTextValue))
         {
-            // User deleted content, move focus to the previous Entry
+            
             MoveFocusToPreviousEntry(entry);
         }
 
-        // Check if all Entries are filled
+        
         if (!string.IsNullOrEmpty(entry1.Text) &&
             !string.IsNullOrEmpty(entry2.Text) &&
             !string.IsNullOrEmpty(entry3.Text) &&
@@ -410,7 +410,7 @@ public partial class SecondPage : ContentPage
         {
             if (args.OldTextValue != null && args.NewTextValue != null && args.NewTextValue.Length < args.OldTextValue.Length)
             {
-                // If text length decreased, indicating backspace was pressed, and entry is empty, move focus to the previous Entry
+                
                 if (string.IsNullOrEmpty(entry.Text))
                 {
                     MoveFocusToPreviousEntry(entry);

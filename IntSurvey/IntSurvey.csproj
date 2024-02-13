@@ -97,6 +97,11 @@
 	  <None Remove="Assets\true_img1.png" />
 	  <None Remove="Assets\true_img_.png" />
 	  <None Remove="Assets\unchecked_checkbox.png" />
+	  <None Remove="Assets\Vector1.png" />
+	  <None Remove="Assets\Vector2.png" />
+	  <None Remove="Assets\Vector3.png" />
+	  <None Remove="Assets\Vector4.png" />
+	  <None Remove="Assets\Vector5.png" />
 	  <None Remove="Platforms\Android\Assets\falseimage.png" />
 	  <None Remove="Platforms\Android\Assets\trueimage.png" />
 	  <None Remove="Resources\Fonts\LICENSE.txt" />
@@ -176,6 +181,9 @@
 	  <MauiImage Include="Assets\true_img.png" />
 	  <MauiImage Include="Assets\true_img1.png" />
 	  <MauiImage Include="Assets\unchecked_checkbox.png" />
+	  <MauiImage Include="Assets\vector1.png" />
+	  <MauiImage Include="Assets\vector2.png" />
+	  <MauiImage Include="Assets\vector4.png" />
 	  <MauiAsset Include="Platforms\Android\Assets\falseimage.png" />
 	  <MauiAsset Include="Platforms\Android\Assets\trueimage.png" />
 	</ItemGroup>
@@ -194,6 +202,11 @@
 	  <PackageReference Include="FreakyControls">
 	    <Version>0.4.8</Version>
 	  </PackageReference>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <MauiImage Include="Assets\vector3.png" />
+	  <MauiImage Include="Assets\vector5.png" />
 	</ItemGroup>
 
 </Project>

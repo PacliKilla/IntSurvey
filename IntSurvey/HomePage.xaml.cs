@@ -43,8 +43,6 @@ namespace IntSurvey
             NavigationPage.SetHasNavigationBar(this, false);
 
 
-            
-
             BindingContext = this;
 
             QuestionnaireName = "Chestionare";
@@ -55,7 +53,7 @@ namespace IntSurvey
             languagePicker.Items.Add("RO");
             languagePicker.Items.Add("RU");
 
-
+            
 
             
             if (Preferences.ContainsKey(SelectedLanguageKey))
@@ -80,8 +78,6 @@ namespace IntSurvey
 
             isFirstFocusHandled = true;
 
-
-
             if (IsInternetConnected())
             {
                 LoadQuestionnairesFromServer();
@@ -90,8 +86,6 @@ namespace IntSurvey
             {
                 LoadQuestionnairesFromCache();
             }
-
-
 
         }
 

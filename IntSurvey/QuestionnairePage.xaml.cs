@@ -305,29 +305,29 @@ namespace IntSurvey
                         }
                         break;
 
-                    case 5:
-                        if (selectedAnswer != null && selectedAnswer is string answerForType5)
-                        {
-                            selectedAnswersForType5[questions[currentQuestionIndex].question] = answerForType5;
+                    //case 5:
+                    //    if (selectedAnswer != null && selectedAnswer is string answerForType5)
+                    //    {
+                    //        selectedAnswersForType5[questions[currentQuestionIndex].question] = answerForType5;
 
-                            if (answerButtonsForType5 != null)
-                            {
-                                foreach (var button in answerButtonsForType5)
-                                {
-                                    if (button.Text == answerForType5)
-                                    {
-                                        // Mark the button as selected
-                                        button.Scale = 1.2;
-                                    }
-                                    else
-                                    {
-                                        // Reset the appearance of other buttons
-                                        button.Scale = 1;
-                                    }
-                                }
-                            }
-                        }
-                        break;
+                    //        if (answerButtonsForType5 != null)
+                    //        {
+                    //            foreach (var button in answerButtonsForType5)
+                    //            {
+                    //                if (button.Text == answerForType5)
+                    //                {
+                    //                    // Mark the button as selected
+                    //                    button.Scale = 1.2;
+                    //                }
+                    //                else
+                    //                {
+                    //                    // Reset the appearance of other buttons
+                    //                    button.Scale = 1;
+                    //                }
+                    //            }
+                    //        }
+                    //    }
+                    //    break;
 
 
 
@@ -556,8 +556,8 @@ namespace IntSurvey
             StackLayout answerStackLayout = new StackLayout
             {
                 Orientation = StackOrientation.Horizontal,
-                Spacing = 10,
-                Padding = new Thickness(30, 10, 0, 150),
+                Spacing = -15,
+                Padding = new Thickness(50, 10, 0, 150),
             };
 
             List<ImageButton> answerButtonsForType5 = new List<ImageButton>();
@@ -611,11 +611,6 @@ namespace IntSurvey
 
             return answerStackLayout;
         }
-
-
-
-
-
 
 
 

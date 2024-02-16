@@ -8,9 +8,9 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
-            <!-- Main content takes all available vertical space -->
+            
             <RowDefinition Height="Auto" />
-            <!-- Row for the checkbox, takes only the required space -->
+            
         </Grid.RowDefinitions>
 
         <VerticalStackLayout Grid.Row="0">

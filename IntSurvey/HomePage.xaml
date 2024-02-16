@@ -15,9 +15,9 @@
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
-                <!-- Auto size for the content -->
+                
                 <RowDefinition x:Name="loadingRow" Height="Auto" />
-                <!-- Auto size initially, will be adjusted when the overlay is visible -->
+                
             </Grid.RowDefinitions>
 
             <StackLayout x:Name="stackLayout" IsVisible="True">
@@ -27,7 +27,7 @@
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
 
-                    <!-- Language selection dropdown -->
+                    
                     <Picker x:Name="languagePicker"
                             
                             Title="Select Language"
@@ -35,7 +35,7 @@
                             HorizontalOptions="End"
                             Margin="0,10,25,20"
                             SelectedIndexChanged="LanguagePicker_SelectedIndexChanged">
-                        <!-- Add language options here -->
+                        
                         <Picker.Items>
 
                         </Picker.Items>
@@ -52,7 +52,7 @@
                            Grid.Column="0"/>
                 </Grid>
 
-                <!-- Your other content goes here -->
+                
             </StackLayout>
 
             <Frame x:Name="loadingOverlay" IsVisible="False" BackgroundColor="#80000000" Padding="0">

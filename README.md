@@ -1,1 +1,1 @@
-Sorr for the code boeing so bad, i had to work on it in parralel with another project, but hey it works.
+Sorr for the code being so bad, I had to work on it in parallel with another project, but hey it works.
